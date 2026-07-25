@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caddy & Auth Status Portal</title>
+    <!-- Google Fonts: Inter & Space Grotesk -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0b0e;
+            --bg-secondary: #12141c;
+            --bg-tertiary: #1b1e2a;
+            --accent-blue: #00f2fe;
+            --accent-purple: #9b51e0;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-yellow: #f59e0b;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --text-tertiary: #6b7280;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --glow-color: rgba(0, 242, 254, 0.15);
+            --transition-speed: 0.2s;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            padding-bottom: 5rem;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Glow Backgrounds */
+        .ambient-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 242, 254, 0.04) 0%, rgba(155, 81, 224, 0.04) 50%, transparent 100%);
+            top: -200px;
+            left: -100px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .ambient-glow-right {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.02) 0%, rgba(0, 242, 254, 0.02) 70%, transparent 100%);
+            bottom: 10%;
+            right: -100px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        header {
+            background: linear-gradient(180deg, rgba(12, 14, 20, 0.9) 0%, rgba(10, 11, 14, 0.9) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 1.25rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            color: #000;
+            font-size: 1.25rem;
+            box-shadow: 0 0 15px var(--glow-color);
+        }
+
+        .logo-text h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #fff 0%, #d1d5db 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-text p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            flex-grow: 1;
+            max-width: 700px;
+            margin-left: 3rem;
+        }
+
+        .search-container {
+            position: relative;
+            flex-grow: 1;
+        }
+
+        .search-input {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            outline: none;
+            transition: all var(--transition-speed);
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.9rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            fill: var(--text-secondary);
+            pointer-events: none;
+        }
+
+        /* Checkbox Styling */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            user-select: none;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            transition: color var(--transition-speed);
+            white-space: nowrap;
+        }
+
+        .checkbox-container:hover {
+            color: var(--text-primary);
+        }
+
+        .checkbox-container input {
+            display: none;
+        }
+
+        .custom-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.04);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-speed);
+        }
+
+        .checkbox-container input:checked + .custom-checkbox {
+            background-color: var(--accent-blue);
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 8px rgba(0, 242, 254, 0.3);
+        }
+
+        .custom-checkbox::after {
+            content: '';
+            width: 5px;
+            height: 10px;
+            border: solid #000;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+            display: none;
+            margin-bottom: 2px;
+        }
+
+        .checkbox-container input:checked + .custom-checkbox::after {
+            display: block;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.6rem 1.2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all var(--transition-speed);
+        }
+
+        .refresh-btn:hover {
+            border-color: var(--accent-blue);
+            background-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .refresh-btn.loading svg {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        main {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Stats Section */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform var(--transition-speed);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+        }
+
+        .stat-card.total::after { background-color: var(--accent-blue); }
+        .stat-card.tinyauth::after { background-color: var(--accent-green); }
+        .stat-card.native::after { background-color: var(--accent-yellow); }
+        .stat-card.ports::after { background-color: var(--accent-purple); }
+
+        .stat-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+        }
+
+        .stat-val {
+            font-size: 1.75rem;
+            font-weight: 700;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* Filter Controls */
+        .filter-section {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.25rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .filter-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            min-width: 100px;
+        }
+
+        .filter-pill {
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all var(--transition-speed);
+        }
+
+        .filter-pill:hover {
+            color: var(--text-primary);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .filter-pill.active {
+            background-color: var(--text-primary);
+            color: var(--bg-primary);
+            border-color: var(--text-primary);
+        }
+
+        .dropdown-select {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            outline: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .dropdown-select option {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        /* List View Container */
+        .portal-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .list-item {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: border-color var(--transition-speed);
+        }
+
+        .list-item:hover {
+            border-color: rgba(0, 242, 254, 0.3);
+        }
+
+        /* Row Header */
+        .list-header {
+            padding: 1rem 1.5rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.5fr 2fr 2fr 0.5fr;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            gap: 1rem;
+        }
+
+        .list-header-titles {
+            padding: 0.5rem 1.5rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.5fr 2fr 2fr 0.5fr;
+            align-items: center;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            gap: 1rem;
+        }
+
+        .container-name-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .container-name {
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: 'Space Grotesk', sans-serif;
+            color: #fff;
+        }
+
+        .service-sub {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .stack-badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            text-transform: uppercase;
+            text-align: center;
+            width: fit-content;
+        }
+
+        /* Stack specific colors */
+        .stack-webservices { background-color: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.25); }
+        .stack-media { background-color: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.25); }
+        .stack-cloud { background-color: rgba(14, 165, 233, 0.15); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.25); }
+        .stack-smarthome { background-color: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.25); }
+        .stack-cameras { background-color: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.25); }
+        .stack-monitoring { background-color: rgba(236, 72, 153, 0.15); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.25); }
+        .stack-books { background-color: rgba(139, 92, 246, 0.15); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.25); }
+        .stack-network { background-color: rgba(20, 184, 166, 0.15); color: #2dd4bf; border: 1px solid rgba(20, 184, 166, 0.25); }
+        .stack-remote_access { background-color: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.25); }
+        .stack-container_registry { background-color: rgba(100, 116, 139, 0.15); color: #94a3b8; border: 1px solid rgba(100, 116, 139, 0.25); }
+        .stack-media_utils { background-color: rgba(161, 98, 7, 0.15); color: #eab308; border: 1px solid rgba(161, 98, 7, 0.25); }
+
+        .auth-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            width: fit-content;
+        }
+
+        .auth-yes {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--accent-green);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .auth-no {
+            background-color: rgba(245, 158, 11, 0.08);
+            color: var(--accent-yellow);
+            border: 1px solid rgba(245, 158, 11, 0.15);
+        }
+
+        .domain-cell {
+            font-size: 0.85rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .domain-link {
+            color: var(--accent-blue);
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .domain-link:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        .expand-chevron {
+            justify-self: end;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            transition: transform var(--transition-speed);
+        }
+
+        .list-item.open .expand-chevron {
+            transform: rotate(180deg);
+        }
+
+        /* Row Details Panel */
+        .list-details {
+            max-height: 0;
+            overflow: hidden;
+            background-color: rgba(0, 0, 0, 0.25);
+            transition: max-height var(--transition-speed) ease-out;
+            border-top: 1px solid transparent;
+        }
+
+        .list-item.open .list-details {
+            max-height: 800px;
+            border-color: var(--border-color);
+        }
+
+        .details-grid {
+            padding: 1.5rem 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .details-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .detail-row {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .detail-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .detail-val {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .detail-val.mono {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            background-color: rgba(255, 255, 255, 0.04);
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            display: inline-block;
+            width: fit-content;
+        }
+
+        .network-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+            margin-top: 0.15rem;
+        }
+
+        .network-pill {
+            font-size: 0.75rem;
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            color: var(--text-secondary);
+        }
+
+        /* Labels Section */
+        .labels-section {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            background-color: #050608;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1rem;
+            font-family: monospace;
+            font-size: 0.75rem;
+            overflow-y: auto;
+            max-height: 250px;
+        }
+
+        .label-pair {
+            display: flex;
+            margin-bottom: 0.35rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            padding-bottom: 0.25rem;
+        }
+
+        .label-key {
+            color: var(--accent-purple);
+            font-weight: bold;
+            min-width: 180px;
+            word-break: break-all;
+        }
+
+        .label-val-raw {
+            color: #ccc;
+            word-break: break-all;
+        }
+
+        /* No Results */
+        .no-results {
+            text-align: center;
+            padding: 5rem 2rem;
+            color: var(--text-secondary);
+            border: 1px dashed var(--border-color);
+            border-radius: 16px;
+            background-color: var(--bg-secondary);
+        }
+
+        .no-results h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-glow"></div>
+    <div class="ambient-glow-right"></div>
+
+    <header>
+        <div class="logo-area">
+            <div class="logo-icon">C</div>
+            <div class="logo-text">
+                <h1>Caddy & Auth Status</h1>
+                <p>Ground-Truth Containers Inventory</p>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="search-container">
+                <svg class="search-icon" viewBox="0 0 24 24">
+                    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+                <input type="text" id="searchBar" class="search-input" placeholder="Search by container name, stack, domain, port, or label...">
+            </div>
+
+            <button id="refreshBtn" class="refresh-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+                </svg>
+                Refresh
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Stats Overview Cards -->
+        <section class="stats-grid">
+            <div class="stat-card total">
+                <span class="stat-label">Total Containers</span>
+                <span class="stat-val" id="statTotal">-</span>
+            </div>
+            <div class="stat-card tinyauth">
+                <span class="stat-label">TinyAuth Protected</span>
+                <span class="stat-val" id="statTinyauth">-</span>
+            </div>
+            <div class="stat-card native">
+                <span class="stat-label">Direct / No SSO</span>
+                <span class="stat-val" id="statNative">-</span>
+            </div>
+            <div class="stat-card ports">
+                <span class="stat-label">Exposed Host Ports</span>
+                <span class="stat-val" id="statPorts">-</span>
+            </div>
+        </section>
+
+        <!-- Filter Controls Section -->
+        <section class="filter-section">
+            <div class="filter-row" style="gap: 1.5rem;">
+                <!-- Stack Filter -->
+                <div style="display:flex; align-items:center; gap:0.5rem; font-size:0.85rem; color:var(--text-secondary);">
+                    <span>Stack:</span>
+                    <select id="stackFilterSelect" class="dropdown-select">
+                        <option value="all">All Stacks</option>
+                    </select>
+                </div>
+
+                <!-- Auth Filter -->
+                <div style="display:flex; align-items:center; gap:0.5rem; font-size:0.85rem; color:var(--text-secondary);">
+                    <span>Auth SSO:</span>
+                    <select id="authFilterSelect" class="dropdown-select">
+                        <option value="all">All Auth States</option>
+                        <option value="tinyauth">🔒 TinyAuth SSO Enabled</option>
+                        <option value="nosso">🔓 Bypassed / Native</option>
+                    </select>
+                </div>
+
+                <!-- Routing Filter -->
+                <div style="display:flex; align-items:center; gap:0.5rem; font-size:0.85rem; color:var(--text-secondary);">
+                    <span>Routing:</span>
+                    <select id="proxyFilterSelect" class="dropdown-select">
+                        <option value="all">All Routing</option>
+                        <option value="exposed">Only Exposed (Caddy)</option>
+                        <option value="unexposed">Only Unexposed (Internal)</option>
+                    </select>
+                </div>
+
+                <!-- Network Filter -->
+                <div style="display:flex; align-items:center; gap:0.5rem; font-size:0.85rem; color:var(--text-secondary);">
+                    <span>Network:</span>
+                    <select id="networkFilterSelect" class="dropdown-select">
+                        <option value="all">All Networks</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- List View Table Header Titles -->
+        <div class="list-header-titles">
+            <span>Container / Service</span>
+            <span>Stack</span>
+            <span>Auth Status</span>
+            <span>Networks</span>
+            <span>Public Domain</span>
+            <span>Local LAN Domain</span>
+            <span style="justify-self: end; padding-right: 0.5rem;">Action</span>
+        </div>
+
+        <!-- Main Portal List Container -->
+        <section class="portal-list" id="portalList">
+            <!-- Populated dynamically via Javascript -->
+        </section>
+    </main>
+
+    <script>
+        let containersData = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchData();
+            
+            // Search and dropdown filters listeners
+            document.getElementById('searchBar').addEventListener('input', filterAndRender);
+            document.getElementById('stackFilterSelect').addEventListener('change', filterAndRender);
+            document.getElementById('authFilterSelect').addEventListener('change', filterAndRender);
+            document.getElementById('proxyFilterSelect').addEventListener('change', filterAndRender);
+            document.getElementById('networkFilterSelect').addEventListener('change', filterAndRender);
+            
+            // Refresh trigger
+            document.getElementById('refreshBtn').addEventListener('click', refreshData);
+        });
+
+        function fetchData() {
+            fetch('/api/containers')
+                .then(res => res.json())
+                .then(data => {
+                    containersData = data;
+                    populateFilterDropdowns();
+                    calculateStats();
+                    filterAndRender();
+                })
+                .catch(err => console.error("Error fetching containers:", err));
+        }
+
+        function refreshData() {
+            const btn = document.getElementById('refreshBtn');
+            btn.classList.add('loading');
+            
+            fetch('/api/refresh')
+                .then(res => res.json())
+                .then(data => {
+                    containersData = data;
+                    populateFilterDropdowns();
+                    calculateStats();
+                    filterAndRender();
+                    setTimeout(() => btn.classList.remove('loading'), 500);
+                })
+                .catch(err => {
+                    console.error("Error refreshing data:", err);
+                    btn.classList.remove('loading');
+                });
+        }
+
+        function calculateStats() {
+            document.getElementById('statTotal').innerText = containersData.length;
+            
+            const tinyauthCount = containersData.filter(c => c.tinyauth === 'Yes').length;
+            document.getElementById('statTinyauth').innerText = tinyauthCount;
+            document.getElementById('statNative').innerText = containersData.length - tinyauthCount;
+            
+            const exposedPortsCount = containersData.filter(c => c.ports.length > 0 && c.ports[0] !== '-').length;
+            document.getElementById('statPorts').innerText = exposedPortsCount;
+        }
+
+        function populateFilterDropdowns() {
+            // 1. Populate Stacks
+            const stackSelect = document.getElementById('stackFilterSelect');
+            stackSelect.innerHTML = '<option value="all">All Stacks</option>';
+            const stacks = [...new Set(containersData.map(c => c.stack))].sort();
+            stacks.forEach(stack => {
+                const opt = document.createElement('option');
+                opt.value = stack;
+                opt.innerText = stack.replace('_', ' ');
+                stackSelect.appendChild(opt);
+            });
+
+            // 2. Populate Networks
+            const netSelect = document.getElementById('networkFilterSelect');
+            netSelect.innerHTML = '<option value="all">All Networks</option>';
+            
+            const nets = new Set();
+            containersData.forEach(c => {
+                c.networks.forEach(n => nets.add(n));
+            });
+            
+            [...nets].sort().forEach(net => {
+                const opt = document.createElement('option');
+                opt.value = net;
+                opt.innerText = net;
+                netSelect.appendChild(opt);
+            });
+        }
+
+        function filterAndRender() {
+            const searchQuery = document.getElementById('searchBar').value.toLowerCase();
+            const stackFilter = document.getElementById('stackFilterSelect').value;
+            const authFilter = document.getElementById('authFilterSelect').value;
+            const proxyFilter = document.getElementById('proxyFilterSelect').value;
+            const networkFilter = document.getElementById('networkFilterSelect').value;
+            
+            const listContainer = document.getElementById('portalList');
+            listContainer.innerHTML = '';
+
+            const filtered = containersData.filter(c => {
+                // Search query match
+                const matchSearch = 
+                    c.container_name.toLowerCase().includes(searchQuery) ||
+                    c.service_name.toLowerCase().includes(searchQuery) ||
+                    c.stack.toLowerCase().includes(searchQuery) ||
+                    c.caddy_public.toLowerCase().includes(searchQuery) ||
+                    c.caddy_lan.toLowerCase().includes(searchQuery) ||
+                    c.ports.some(p => p.toLowerCase().includes(searchQuery)) ||
+                    Object.keys(c.labels).some(k => k.toLowerCase().includes(searchQuery)) ||
+                    Object.values(c.labels).some(v => v.toLowerCase().includes(searchQuery));
+
+                // Stack filter match
+                const matchStack = stackFilter === 'all' || c.stack === stackFilter;
+
+                // Auth filter match
+                let matchAuth = true;
+                if (authFilter === 'tinyauth') {
+                    matchAuth = c.tinyauth === 'Yes';
+                } else if (authFilter === 'nosso') {
+                    matchAuth = c.tinyauth === 'No';
+                }
+
+                // Proxy select match
+                let matchProxy = true;
+                const isExposed = c.caddy_public !== '-' || c.caddy_lan !== '-';
+                if (proxyFilter === 'exposed') {
+                    matchProxy = isExposed;
+                } else if (proxyFilter === 'unexposed') {
+                    matchProxy = !isExposed;
+                }
+
+                // Network select match
+                const matchNetwork = networkFilter === 'all' || c.networks.includes(networkFilter);
+
+                return matchSearch && matchStack && matchAuth && matchProxy && matchNetwork;
+            });
+
+            if (filtered.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="no-results">
+                        <h3>No Containers Matched</h3>
+                        <p>Adjust your search filters or refine your queries.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(c => {
+                const item = document.createElement('div');
+                item.className = 'list-item';
+                
+                // Format ports
+                const portsDisplay = c.ports.length > 0 && c.ports[0] !== '-'
+                    ? c.ports.map(p => `<span class="detail-val mono">${p}</span>`).join(' ') 
+                    : '<span class="detail-val text-tertiary">None</span>';
+                
+                // Format public domain link
+                const publicDomainDisplay = c.caddy_public !== '-' 
+                    ? `<a href="https://${c.caddy_public}" target="_blank" class="domain-link" onclick="event.stopPropagation()">https://${c.caddy_public}</a>`
+                    : '<span class="text-tertiary">-</span>';
+                
+                // Format LAN domains
+                const lanDomainsDisplay = c.caddy_lan !== '-' 
+                    ? c.caddy_lan.split(',').map(d => `<a href="${d.trim()}" target="_blank" class="domain-link" onclick="event.stopPropagation()">${d.trim()}</a>`).join(', ')
+                    : '<span class="text-tertiary">-</span>';
+
+                // Format networks
+                const networksDisplay = c.networks.length > 0 
+                    ? c.networks.map(n => `<span class="network-pill">${n}</span>`).join('')
+                    : '<span class="text-tertiary">None</span>';
+
+                // Format labels toggle panel
+                let labelsHtml = '';
+                if (Object.keys(c.labels).length > 0) {
+                    labelsHtml = Object.entries(c.labels).map(([k, v]) => `
+                        <div class="label-pair">
+                            <span class="label-key">${k}</span>
+                            <span class="label-val-raw">${v}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    labelsHtml = '<div class="text-tertiary">No docker labels configured on this service.</div>';
+                }
+
+                item.innerHTML = `
+                    <div class="list-header" onclick="toggleDetails(this)">
+                        <div class="container-name-wrapper">
+                            <span class="container-name">${c.container_name}</span>
+                            <span class="service-sub">Service: ${c.service_name}</span>
+                        </div>
+                        <div>
+                            <span class="stack-badge stack-${c.stack}">${c.stack.replace('_', ' ')}</span>
+                        </div>
+                        <div>
+                            <span class="auth-badge ${c.tinyauth === 'Yes' ? 'auth-yes' : 'auth-no'}">
+                                ${c.tinyauth === 'Yes' ? '🔒 TinyAuth' : '🔓 Bypassed'}
+                            </span>
+                        </div>
+                        <div class="network-pills">${networksDisplay}</div>
+                        <div class="domain-cell">${publicDomainDisplay}</div>
+                        <div class="domain-cell">${lanDomainsDisplay}</div>
+                        <div class="expand-chevron">▼</div>
+                    </div>
+                    <div class="list-details">
+                        <div class="details-grid">
+                            <div class="details-info">
+                                <div class="detail-row">
+                                    <span class="detail-label">Docker Image</span>
+                                    <span class="detail-val" style="font-family:monospace; font-size:0.8rem; color:var(--text-secondary);">${c.image}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Exposed Host Ports</span>
+                                    <div style="display:flex; gap:0.25rem; flex-wrap:wrap; margin-top:0.15rem;">
+                                        ${portsDisplay}
+                                    </div>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Docker Networks</span>
+                                    <div class="network-pills">${networksDisplay}</div>
+                                </div>
+                            </div>
+                            <div class="details-info">
+                                <span class="detail-label">Docker Compose Labels</span>
+                                <div class="labels-section">
+                                    ${labelsHtml}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                listContainer.appendChild(item);
+            });
+        }
+
+        function toggleDetails(header) {
+            const item = header.closest('.list-item');
+            const openItems = document.querySelectorAll('.list-item.open');
+            
+            // Close other items
+            openItems.forEach(el => {
+                if (el !== item) {
+                    el.classList.remove('open');
+                }
+            });
+
+            item.classList.toggle('open');
+        }
+    </script>
+</body>
+</html>

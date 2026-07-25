@@ -1,0 +1,3300 @@
+[
+  {
+    "container_name": "shelfmark",
+    "service_name": "shelfmark",
+    "stack": "books",
+    "image": "ghcr.io/calibrain/shelfmark:latest",
+    "ports": [
+      "8424:8084"
+    ],
+    "networks": [
+      "net_media",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.bookrequests.name": "Book Requests",
+      "portal.bookrequests.description": "Request new books or audiobooks to be automatically downloaded (Shelfmark).",
+      "portal.bookrequests.category": "Media Library",
+      "portal.bookrequests.icon": "fa-solid fa-magnifying-glass-plus",
+      "portal.bookrequests.color": "#10b981",
+      "tinyauth.apps.bookrequests.config.domain": "bookrequests.wileyriley.com",
+      "tinyauth.apps.bookrequests.oauth.groups": "media_access,full_admin",
+      "kuma.bookrequests.http.name": "Book Requests",
+      "kuma.bookrequests.http.url": "https://bookrequests.wileyriley.com",
+      "kuma.bookrequests.http.group": "Books & Audio"
+    }
+  },
+  {
+    "container_name": "audiobookshelf",
+    "service_name": "audiobookshelf",
+    "stack": "books",
+    "image": "ghcr.io/advplyr/audiobookshelf:latest",
+    "ports": [
+      "8426:80"
+    ],
+    "networks": [
+      "net_media",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.elibrary.name": "eLibrary",
+      "portal.elibrary.description": "Browse, stream, and read eBooks and audiobooks (Audiobookshelf).",
+      "portal.elibrary.category": "Media Library",
+      "portal.elibrary.icon": "fa-solid fa-book-open",
+      "portal.elibrary.color": "#00f2fe",
+      "tinyauth.apps.elibrary.config.domain": "elibrary.wileyriley.com",
+      "tinyauth.apps.elibrary.oauth.groups": "media_access,media_admin,full_admin",
+      "kuma.elibrary.http.name": "eLibrary",
+      "kuma.elibrary.http.url": "https://elibrary.wileyriley.com",
+      "kuma.elibrary.http.group": "Books & Audio"
+    }
+  },
+  {
+    "container_name": "oreilly-ingest",
+    "service_name": "oreilly-ingest",
+    "stack": "books",
+    "image": "unknown",
+    "ports": [
+      "8427:8000"
+    ],
+    "networks": [
+      "net_media",
+      "net_webservices"
+    ],
+    "caddy_public": "techdocs.wileyriley.com",
+    "caddy_lan": "-",
+    "tinyauth": "Yes",
+    "labels": {
+      "caddy": "techdocs.wileyriley.com",
+      "caddy.import_1": "cloudflare",
+      "caddy.import_2": "tinyauth",
+      "caddy.reverse_proxy": "{{upstreams 8000}}",
+      "tinyauth.apps.techdocs.config.domain": "techdocs.wileyriley.com",
+      "tinyauth.apps.techdocs.oauth.groups": "full_admin",
+      "kuma.techdocs.http.name": "Tech Docs Ingest",
+      "kuma.techdocs.http.url": "https://techdocs.wileyriley.com",
+      "kuma.techdocs.http.group": "Books & Audio",
+      "portal.techdocs.name": "O'Reilly Ingest",
+      "portal.techdocs.description": "Export and download O'Reilly books in LLM and traditional formats (Markdown, PDF, EPUB).",
+      "portal.techdocs.category": "Media Library",
+      "portal.techdocs.icon": "fa-solid fa-book-bookmark",
+      "portal.techdocs.color": "#ff6b6b"
+    }
+  },
+  {
+    "container_name": "cloudflare-ddns",
+    "service_name": "cloudflare-ddns",
+    "stack": "network",
+    "image": "timothyjmiller/cloudflare-ddns:latest",
+    "ports": [],
+    "networks": [],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "termix",
+    "service_name": "termix",
+    "stack": "remote_access",
+    "image": "ghcr.io/lukegus/termix:latest",
+    "ports": [
+      "host"
+    ],
+    "networks": [],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.termix.name": "Termix SSH & RDP",
+      "portal.termix.description": "Web-based clientless SSH, RDP, and VNC gateway client.",
+      "portal.termix.category": "System Infrastructure",
+      "portal.termix.icon": "fa-solid fa-desktop",
+      "portal.termix.color": "#ef4444",
+      "tinyauth.apps.termix.config.domain": "rap.wileyriley.com",
+      "tinyauth.apps.termix.oauth.groups": "full_admin",
+      "kuma.termix.http.name": "Termix Guacamole",
+      "kuma.termix.http.url": "https://rap.wileyriley.com",
+      "kuma.termix.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "guacd",
+    "service_name": "guacd",
+    "stack": "remote_access",
+    "image": "guacamole/guacd:latest",
+    "ports": [
+      "host"
+    ],
+    "networks": [],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "dockge",
+    "service_name": "dockge",
+    "stack": "monitoring",
+    "image": "louislam/dockge:1",
+    "ports": [
+      "9012:5001"
+    ],
+    "networks": [
+      "net_monitoring",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.stacks.name": "Stacks (Dockge)",
+      "portal.stacks.description": "Visual stack & compose manager.",
+      "portal.stacks.category": "System Infrastructure",
+      "portal.stacks.icon": "fa-solid fa-layer-group",
+      "portal.stacks.color": "#ef4444",
+      "kuma.dockge.http.name": "Stacks (Dockge)",
+      "kuma.dockge.http.url": "https://stacks.wileyriley.com",
+      "kuma.dockge.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "homepage",
+    "service_name": "homepage",
+    "stack": "monitoring",
+    "image": "ghcr.io/gethomepage/homepage:latest",
+    "ports": [
+      "9006:3000"
+    ],
+    "networks": [
+      "net_monitoring",
+      "net_webservices",
+      "net_media"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.dashboard.name": "Homepage",
+      "portal.dashboard.description": "Personal dashboard.",
+      "portal.dashboard.category": "System Infrastructure",
+      "portal.dashboard.icon": "fa-solid fa-house",
+      "portal.dashboard.color": "#3b82f6",
+      "kuma.homepage.http.name": "Homepage",
+      "kuma.homepage.http.url": "https://wileyriley.com",
+      "kuma.homepage.http.group": "\ud83c\udf0d Public/Reverse Proxy Entry (HTTPS)",
+      "kuma.homepage.http.accepted_status_codes": "[\"200-299\", \"401\"]",
+      "tinyauth.apps.dashboard.config.domain": "dashboard.wileyriley.com",
+      "tinyauth.apps.dashboard.oauth.groups": "full_admin"
+    }
+  },
+  {
+    "container_name": "uptime-kuma",
+    "service_name": "uptime-kuma",
+    "stack": "monitoring",
+    "image": "louislam/uptime-kuma:2",
+    "ports": [
+      "9007:3001"
+    ],
+    "networks": [
+      "net_monitoring",
+      "net_webservices",
+      "net_mcp"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.uptimekuma.name": "Uptime Kuma",
+      "portal.uptimekuma.description": "Uptime monitoring.",
+      "portal.uptimekuma.category": "System Infrastructure",
+      "portal.uptimekuma.icon": "fa-solid fa-heartbeat",
+      "portal.uptimekuma.color": "#10b981",
+      "tinyauth.apps.uptimekuma.config.domain": "status.wileyriley.com",
+      "tinyauth.apps.uptimekuma.oauth.groups": "full_admin",
+      "kuma.uptimekuma.http.name": "Uptime Kuma",
+      "kuma.uptimekuma.http.url": "https://status.wileyriley.com",
+      "kuma.uptimekuma.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "dozzle",
+    "service_name": "dozzle",
+    "stack": "monitoring",
+    "image": "amir20/dozzle:latest",
+    "ports": [
+      "9008:8080"
+    ],
+    "networks": [
+      "net_monitoring",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.dozzle.name": "Dozzle",
+      "portal.dozzle.description": "Real-time Docker container log viewer.",
+      "portal.dozzle.category": "System Infrastructure",
+      "portal.dozzle.icon": "fa-solid fa-terminal",
+      "portal.dozzle.color": "#6366f1",
+      "tinyauth.apps.dozzle.config.domain": "logs.wileyriley.com",
+      "tinyauth.apps.dozzle.oauth.groups": "full_admin",
+      "kuma.dozzle.http.name": "Dozzle Logs",
+      "kuma.dozzle.http.url": "https://logs.wileyriley.com",
+      "kuma.dozzle.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "apprise",
+    "service_name": "apprise",
+    "stack": "monitoring",
+    "image": "lscr.io/linuxserver/apprise-api:latest",
+    "ports": [
+      "9009:8000"
+    ],
+    "networks": [
+      "net_monitoring",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.apprise.name": "Apprise",
+      "portal.apprise.description": "Unified push notifications API gateway.",
+      "portal.apprise.category": "System Infrastructure",
+      "portal.apprise.icon": "fa-solid fa-bell",
+      "portal.apprise.color": "#f43f5e",
+      "tinyauth.apps.apprise.config.domain": "apprise.wileyriley.com",
+      "tinyauth.apps.apprise.oauth.groups": "full_admin",
+      "tinyauth.apps.apprise.path.allow": "^(?:/api|/notify)",
+      "kuma.apprise.http.name": "Apprise API",
+      "kuma.apprise.http.url": "https://apprise.wileyriley.com/status",
+      "kuma.apprise.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "ntfy",
+    "service_name": "ntfy",
+    "stack": "monitoring",
+    "image": "binwiederhier/ntfy:latest",
+    "ports": [
+      "9010:80"
+    ],
+    "networks": [
+      "net_monitoring",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.ntfy.name": "Ntfy",
+      "portal.ntfy.description": "Push notification server.",
+      "portal.ntfy.category": "System Infrastructure",
+      "portal.ntfy.icon": "fa-solid fa-bell",
+      "portal.ntfy.color": "#f59e0b",
+      "kuma.ntfy.http.name": "ntfy",
+      "kuma.ntfy.http.url": "https://ntfy.wileyriley.com",
+      "kuma.ntfy.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "scrutiny",
+    "service_name": "scrutiny",
+    "stack": "monitoring",
+    "image": "ghcr.io/analogj/scrutiny:latest-omnibus",
+    "ports": [
+      "9011:8080"
+    ],
+    "networks": [
+      "net_monitoring",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.scrutiny.name": "Scrutiny",
+      "portal.scrutiny.description": "Hard drive health monitoring.",
+      "portal.scrutiny.category": "System Infrastructure",
+      "portal.scrutiny.icon": "fa-solid fa-hard-drive",
+      "portal.scrutiny.color": "#3b82f6",
+      "tinyauth.apps.scrutiny.config.domain": "scrutiny.wileyriley.com",
+      "tinyauth.apps.scrutiny.oauth.groups": "full_admin",
+      "kuma.scrutiny.http.name": "Scrutiny SMART",
+      "kuma.scrutiny.http.url": "https://scrutiny.wileyriley.com",
+      "kuma.scrutiny.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "autokuma",
+    "service_name": "autokuma",
+    "stack": "monitoring",
+    "image": "ghcr.io/bigboot/autokuma:latest",
+    "ports": [],
+    "networks": [
+      "net_monitoring"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "wud",
+    "service_name": "wud",
+    "stack": "monitoring/wud",
+    "image": "fmartinou/whats-up-docker",
+    "ports": [
+      "3010:3000"
+    ],
+    "networks": [
+      "net_monitoring",
+      "net_cloud",
+      "net_webservices"
+    ],
+    "caddy_public": "wud.wileyriley.com",
+    "caddy_lan": "-",
+    "tinyauth": "Yes",
+    "labels": {
+      "caddy": "wud.wileyriley.com",
+      "caddy.import_1": "cloudflare",
+      "caddy.import_2": "tinyauth",
+      "caddy.reverse_proxy": "{{upstreams 3000}}",
+      "tinyauth.apps.wud.config.domain": "wud.wileyriley.com",
+      "tinyauth.apps.wud.oauth.groups": "house_member,full_admin",
+      "portal.wud.name": "What's Up Docker",
+      "portal.wud.description": "Monitor Docker containers and notify or update on new image versions.",
+      "portal.wud.category": "System Infrastructure",
+      "portal.wud.icon": "fa-solid fa-arrows-rotate",
+      "portal.wud.color": "#0db7ed",
+      "kuma.wud.http.name": "What's Up Docker",
+      "kuma.wud.http.url": "https://wud.wileyriley.com",
+      "kuma.wud.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "recyclarr",
+    "service_name": "recyclarr",
+    "stack": "media_utils",
+    "image": "ghcr.io/recyclarr/recyclarr",
+    "ports": [],
+    "networks": [
+      "net_media"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "plextraktsync",
+    "service_name": "plextraktsync",
+    "stack": "media_utils",
+    "image": "ghcr.io/taxel/plextraktsync",
+    "ports": [],
+    "networks": [
+      "net_media"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "kometa",
+    "service_name": "kometa",
+    "stack": "media_utils",
+    "image": "kometateam/kometa:latest",
+    "ports": [],
+    "networks": [
+      "net_media"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "http://kometa.lan, http://kometa",
+    "tinyauth": "No",
+    "labels": {
+      "caddy_1": "http://kometa.lan, http://kometa",
+      "caddy_1.reverse_proxy": "{{upstreams 7171}}"
+    }
+  },
+  {
+    "container_name": "imagemaid",
+    "service_name": "imagemaid",
+    "stack": "media_utils",
+    "image": "kometateam/imagemaid:latest",
+    "ports": [],
+    "networks": [
+      "net_media"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "kometa-quickstart",
+    "service_name": "kometa-quickstart",
+    "stack": "media_utils",
+    "image": "kometateam/quickstart:develop",
+    "ports": [
+      "8505:7171"
+    ],
+    "networks": [
+      "net_media",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "maintainerr",
+    "service_name": "maintainerr",
+    "stack": "media_utils",
+    "image": "ghcr.io/maintainerr/maintainerr:latest",
+    "ports": [
+      "8904:6246"
+    ],
+    "networks": [
+      "net_media",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.maintainerr.name": "Maintainerr",
+      "portal.maintainerr.description": "Automated media deletion and retention rules.",
+      "portal.maintainerr.category": "Media Management",
+      "portal.maintainerr.icon": "fa-solid fa-dumpster",
+      "portal.maintainerr.color": "#10b981",
+      "tinyauth.apps.maintainerr.config.domain": "plexmgr.wileyriley.com",
+      "tinyauth.apps.maintainerr.oauth.groups": "media_admin,full_admin",
+      "tinyauth.apps.maintainerr.path.allow": "^/api",
+      "kuma.maintainerr.http.name": "Maintainerr",
+      "kuma.maintainerr.http.url": "https://plexmgr.wileyriley.com",
+      "kuma.maintainerr.http.group": "- Media"
+    }
+  },
+  {
+    "container_name": "posterizarr",
+    "service_name": "posterizarr",
+    "stack": "media_utils",
+    "image": "ghcr.io/fscorrupt/posterizarr:latest",
+    "ports": [
+      "8906:8219"
+    ],
+    "networks": [
+      "net_media",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "plex-auto-languages",
+    "service_name": "plex-auto-languages",
+    "stack": "media_utils",
+    "image": "remirigal/plex-auto-languages:latest",
+    "ports": [],
+    "networks": [
+      "net_media"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "labelarr",
+    "service_name": "labelarr",
+    "stack": "media_utils",
+    "image": "ghcr.io/nullable-eth/labelarr:latest",
+    "ports": [],
+    "networks": [
+      "net_media"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "prusa_camera",
+    "service_name": "prusa_connect_rtsp",
+    "stack": "cameras",
+    "image": "jtee3d/prusa_connect_rtsp:latest",
+    "ports": [],
+    "networks": [
+      "net_cameras"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "frigate",
+    "service_name": "frigate",
+    "stack": "cameras",
+    "image": "ghcr.io/blakeblackshear/frigate:stable",
+    "ports": [
+      "8300:8971",
+      "8301:5000",
+      "8302:8554",
+      "8303:8555/tcp",
+      "8303:8555/udp",
+      "8304:1984"
+    ],
+    "networks": [
+      "net_cameras",
+      "net_smarthome_link",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.frigate.name": "Frigate NVR",
+      "portal.frigate.description": "NVR & AI object detection for IP cameras.",
+      "portal.frigate.category": "Smart Home",
+      "portal.frigate.icon": "fa-solid fa-video",
+      "portal.frigate.color": "#ef4444",
+      "tinyauth.apps.frigate.config.domain": "nvr.wileyriley.com",
+      "tinyauth.apps.frigate.oauth.groups": "house_member,full_admin",
+      "kuma.frigate.http.name": "Frigate NVR",
+      "kuma.frigate.http.url": "https://nvr.wileyriley.com",
+      "kuma.frigate.http.group": "Smart Home"
+    }
+  },
+  {
+    "container_name": "searxng",
+    "service_name": "searxng",
+    "stack": "webservices",
+    "image": "docker.io/searxng/searxng:latest",
+    "ports": [
+      "${SEARXNG_PORT}:8080"
+    ],
+    "networks": [
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "tinyauth.apps.searxng.config.domain": "searxng.wileyriley.com",
+      "tinyauth.apps.searxng.oauth.groups": "house_member,full_admin",
+      "portal.searxng.name": "SearXNG",
+      "portal.searxng.description": "Privacy-respecting search engine aggregator.",
+      "portal.searxng.category": "System Infrastructure",
+      "portal.searxng.icon": "fa-solid fa-magnifying-glass",
+      "portal.searxng.color": "#3b82f6",
+      "kuma.searxng.http.name": "SearXNG",
+      "kuma.searxng.http.url": "https://searxng.wileyriley.com",
+      "kuma.searxng.http.group": "\ud83c\udf0f Public/Reverse Proxy Entry (HTTPS)"
+    }
+  },
+  {
+    "container_name": "searxng-redis",
+    "service_name": "searxng-redis",
+    "stack": "webservices",
+    "image": "docker.io/library/redis:alpine",
+    "ports": [],
+    "networks": [
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "quickcreds",
+    "service_name": "quickcreds",
+    "stack": "webservices",
+    "image": "ghcr.io/spelech/vaultwardencredsync:latest",
+    "ports": [
+      "8006:8110"
+    ],
+    "networks": [
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.quickcreds.name": "QuickCreds",
+      "portal.quickcreds.description": "Vaultwarden credential synchronisation tool.",
+      "portal.quickcreds.category": "System Infrastructure",
+      "portal.quickcreds.icon": "fa-solid fa-key",
+      "portal.quickcreds.color": "#eab308",
+      "wud.watch": "true",
+      "wud.trigger.AUTOUPDATE.dryrun": "false",
+      "wud.registry": "ghcr",
+      "tinyauth.apps.quickcreds.config.domain": "quickcreds.wileyriley.com",
+      "tinyauth.apps.quickcreds.oauth.groups": "full_admin",
+      "kuma.quickcreds.http.name": "QuickCreds",
+      "kuma.quickcreds.http.url": "https://quickcreds.wileyriley.com",
+      "kuma.quickcreds.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "crowdsec",
+    "service_name": "crowdsec",
+    "stack": "webservices",
+    "image": "crowdsecurity/crowdsec:latest",
+    "ports": [],
+    "networks": [
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "pocketid",
+    "service_name": "pocketid",
+    "stack": "webservices",
+    "image": "ghcr.io/pocket-id/pocket-id:latest",
+    "ports": [
+      "8007:1411"
+    ],
+    "networks": [
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "net_webservices",
+    "tinyauth": "No",
+    "labels": {
+      "portal.pocketid.name": "PocketID",
+      "portal.pocketid.description": "OIDC Identity Provider using Passkeys.",
+      "portal.pocketid.category": "System Infrastructure",
+      "portal.pocketid.icon": "fa-solid fa-fingerprint",
+      "portal.pocketid.color": "#3b82f6",
+      "caddy_ingress_network": "net_webservices",
+      "kuma.pocketid.http.name": "PocketID",
+      "kuma.pocketid.http.url": "https://sso.wileyriley.com",
+      "kuma.pocketid.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "tinyauth",
+    "service_name": "tinyauth",
+    "stack": "webservices",
+    "image": "ghcr.io/tinyauthapp/tinyauth:nightly",
+    "ports": [
+      "8008:3000"
+    ],
+    "networks": [
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.tinyauth.name": "TinyAuth Gateway",
+      "portal.tinyauth.description": "Forward Auth SSO Portal & Gateway.",
+      "portal.tinyauth.category": "System Infrastructure",
+      "portal.tinyauth.icon": "fa-solid fa-shield",
+      "portal.tinyauth.color": "#10b981",
+      "kuma.tinyauth.http.name": "TinyAuth Gateway",
+      "kuma.tinyauth.http.url": "https://sso-gateway.wileyriley.com",
+      "kuma.tinyauth.http.group": "Infrastructure",
+      "tinyauth.apps.stacks.config.domain": "stacks.wileyriley.com",
+      "portal.stacks.name": "Stacks (Dockge)",
+      "portal.stacks.category": "System Infrastructure",
+      "portal.stacks.icon": "fa-solid fa-layer-group",
+      "portal.stacks.color": "#ef4444",
+      "portal.stacks.description": "Manage Docker compose files and active service stacks.",
+      "tinyauth.apps.stacks.oauth.groups": "full_admin",
+      "tinyauth.apps.adguard.config.domain": "agh.wileyriley.com",
+      "portal.adguard.name": "AdGuard Home",
+      "portal.adguard.category": "System Infrastructure",
+      "portal.adguard.icon": "fa-solid fa-shield-halved",
+      "portal.adguard.color": "#10b981",
+      "portal.adguard.description": "DNS administration, filtering, and local domain routing rules.",
+      "tinyauth.apps.adguard.oauth.groups": "full_admin",
+      "tinyauth.apps.adguard.path.allow": "^/control/",
+      "tinyauth.apps.unifi.config.domain": "nc.wileyriley.com",
+      "portal.unifi.name": "UniFi Network",
+      "portal.unifi.category": "System Infrastructure",
+      "portal.unifi.icon": "fa-solid fa-network-wired",
+      "portal.unifi.color": "#0ea5e9",
+      "portal.unifi.description": "UniFi Cloud Gateway Network Controller.",
+      "tinyauth.apps.unifi.oauth.groups": "full_admin"
+    }
+  },
+  {
+    "container_name": "sso-portal",
+    "service_name": "sso-portal",
+    "stack": "webservices",
+    "image": "localhost:8003/sso-portal:latest",
+    "ports": [
+      "8009:8009"
+    ],
+    "networks": [
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "caddy",
+    "service_name": "caddy",
+    "stack": "webservices",
+    "image": "unknown",
+    "ports": [
+      "80:80",
+      "443:443"
+    ],
+    "networks": [
+      "net_webservices",
+      "net_media",
+      "net_cloud",
+      "net_smarthome_talk",
+      "net_smarthome_data",
+      "net_smarthome_link"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "bitwarden",
+    "service_name": "bitwarden",
+    "stack": "webservices",
+    "image": "vaultwarden/server:latest",
+    "ports": [],
+    "networks": [
+      "net_cloud",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.bitwarden.name": "Bitwarden",
+      "portal.bitwarden.description": "Self-hosted secure password manager.",
+      "portal.bitwarden.category": "Cloud",
+      "portal.bitwarden.icon": "fa-solid fa-key",
+      "portal.bitwarden.color": "#10b981",
+      "kuma.bitwarden.http.name": "Bitwarden",
+      "kuma.bitwarden.http.url": "https://bwpm.wileyriley.com",
+      "kuma.bitwarden.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "bitwarden_kp",
+    "service_name": "bitwarden_kp",
+    "stack": "webservices",
+    "image": "vaultwarden/server:latest",
+    "ports": [],
+    "networks": [
+      "net_cloud",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "kopia",
+    "service_name": "kopia",
+    "stack": "webservices",
+    "image": "kopia/kopia:latest",
+    "ports": [
+      "8490:51515"
+    ],
+    "networks": [
+      "net_cloud",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.kopia.name": "Kopia Backup",
+      "portal.kopia.description": "Encrypted secure backup server.",
+      "portal.kopia.category": "Cloud",
+      "portal.kopia.icon": "fa-solid fa-floppy-disk",
+      "portal.kopia.color": "#ef4444",
+      "tinyauth.apps.kopia.config.domain": "kopia.wileyriley.com",
+      "tinyauth.apps.kopia.oauth.groups": "full_admin",
+      "kuma.kopia.http.name": "Kopia Backup",
+      "kuma.kopia.http.url": "https://kopia.wileyriley.com",
+      "kuma.kopia.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "sabnzbd",
+    "service_name": "sabnzbd",
+    "stack": "media_download",
+    "image": "lscr.io/linuxserver/sabnzbd:latest",
+    "ports": [
+      "8600:8080"
+    ],
+    "networks": [
+      "net_media",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.sabnzbd.name": "SABnzbd",
+      "portal.sabnzbd.description": "Usenet binary downloader.",
+      "portal.sabnzbd.category": "Media Management",
+      "portal.sabnzbd.icon": "fa-solid fa-download",
+      "portal.sabnzbd.color": "#f59e0b",
+      "kuma.sabnzbd.http.name": "SABnzbd",
+      "kuma.sabnzbd.http.url": "https://sab.wileyriley.com",
+      "kuma.sabnzbd.http.group": "- Media",
+      "tinyauth.apps.sabnzbd.config.domain": "sab.wileyriley.com",
+      "tinyauth.apps.sabnzbd.oauth.groups": "media_admin,full_admin",
+      "tinyauth.apps.sabnzbd.path.allow": "^/api"
+    }
+  },
+  {
+    "container_name": "qbittorrent",
+    "service_name": "qbittorrent",
+    "stack": "media_download",
+    "image": "lscr.io/linuxserver/qbittorrent:latest",
+    "ports": [
+      "8601:8080",
+      "6881:6881",
+      "6881:6881/udp"
+    ],
+    "networks": [
+      "net_media",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.qbittorrent.name": "qBittorrent",
+      "portal.qbittorrent.description": "Torrent downloader.",
+      "portal.qbittorrent.category": "Media Management",
+      "portal.qbittorrent.icon": "fa-solid fa-cloud-arrow-down",
+      "portal.qbittorrent.color": "#3b82f6",
+      "kuma.qbittorrent.http.name": "qBittorrent",
+      "kuma.qbittorrent.http.url": "https://bt.wileyriley.com",
+      "kuma.qbittorrent.http.group": "- Media",
+      "tinyauth.apps.qbittorrent.config.domain": "bt.wileyriley.com",
+      "tinyauth.apps.qbittorrent.oauth.groups": "media_admin,full_admin",
+      "tinyauth.apps.qbittorrent.path.allow": "^/(api|query|login|sync)"
+    }
+  },
+  {
+    "container_name": "arm-rippers",
+    "service_name": "arm",
+    "stack": "media_download",
+    "image": "automaticrippingmachine/automatic-ripping-machine:latest",
+    "ports": [
+      "8602:8080"
+    ],
+    "networks": [
+      "net_media",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "rdtclient",
+    "service_name": "rdtclient",
+    "stack": "media_download",
+    "image": "rogerfar/rdtclient:latest",
+    "ports": [
+      "8603:6500"
+    ],
+    "networks": [
+      "net_media",
+      "net_webservices"
+    ],
+    "caddy_public": "rdt.wileyriley.com",
+    "caddy_lan": "-",
+    "tinyauth": "Yes",
+    "labels": {
+      "caddy": "rdt.wileyriley.com",
+      "caddy.import_1": "cloudflare",
+      "caddy.import_2": "tinyauth",
+      "caddy.reverse_proxy": "{{upstreams 6500}}",
+      "tinyauth.apps.rdtclient.config.domain": "rdt.wileyriley.com",
+      "tinyauth.apps.rdtclient.oauth.groups": "media_admin,full_admin",
+      "tinyauth.apps.rdtclient.path.allow": "^/api",
+      "portal.rdtclient.name": "RDT-Client",
+      "portal.rdtclient.description": "Real-Debrid Torrent Client (fake qBittorrent API).",
+      "portal.rdtclient.category": "Media Management",
+      "portal.rdtclient.icon": "fa-solid fa-download",
+      "portal.rdtclient.color": "#f59e0b",
+      "kuma.rdtclient.http.name": "RDT Client",
+      "kuma.rdtclient.http.url": "https://rdt.wileyriley.com",
+      "kuma.rdtclient.http.group": "- Media"
+    }
+  },
+  {
+    "container_name": "vision-db-dev",
+    "service_name": "db",
+    "stack": "dev/vision-pipeline",
+    "image": "postgres:16-alpine",
+    "ports": [
+      "5433:5432"
+    ],
+    "networks": [
+      "default"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "wud.watch": "false"
+    }
+  },
+  {
+    "container_name": "vision-pipeline-dev",
+    "service_name": "vision-pipeline",
+    "stack": "dev/vision-pipeline",
+    "image": "${VISION_PIPELINE_IMAGE:-ghcr.io/spelech/vision-pipeline}:${VISION_PIPELINE_TAG:-latest}-dev",
+    "ports": [
+      "${APP_PORT:-8461}:8501"
+    ],
+    "networks": [
+      "default",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "wud.watch": "false",
+      "tinyauth.apps.vision.config.domain": "vision.wileyriley.com",
+      "tinyauth.apps.vision.oauth.groups": "full_admin",
+      "kuma.vision.http.name": "Vision Pipeline",
+      "kuma.vision.http.url": "https://vision.wileyriley.com",
+      "kuma.vision.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "mcp-router",
+    "service_name": "mcp-router",
+    "stack": "mcp",
+    "image": "ghcr.io/spelech/csharp-mcp-router:latest",
+    "ports": [
+      "8026:8080"
+    ],
+    "networks": [
+      "net_webservices",
+      "net_smarthome_link",
+      "net_cloud",
+      "net_media",
+      "net_network"
+    ],
+    "caddy_public": "mcp.wileyriley.com",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.mcp-router.name": "MCP Gateway",
+      "portal.mcp-router.description": "Consolidated MCP Gateway Router & Dashboard.",
+      "portal.mcp-router.category": "LLMs",
+      "portal.mcp-router.icon": "fa-solid fa-network-wired",
+      "portal.mcp-router.color": "#a855f7",
+      "wud.tag.include": "^\\d+\\.\\d+\\.\\d+$",
+      "wud.watch": "true",
+      "wud.registry": "ghcr",
+      "wud.trigger.AUTOUPDATE.dryrun": "false",
+      "caddy": "mcp.wileyriley.com",
+      "caddy.import_1": "cloudflare",
+      "caddy.@auth.not.path": "/sse* /message* /media* /media4k* /financial* /homecontrol* /unifi* /infrastructure* /.well-known* /oauth/token* /oauth/authorize*",
+      "caddy.handle": "@auth",
+      "caddy.handle.import": "tinyauth",
+      "caddy.reverse_proxy": "{{upstreams 8080}}",
+      "tinyauth.apps.mcp-router.config.domain": "mcp.wileyriley.com",
+      "tinyauth.apps.mcp-router.oauth.groups": "full_admin",
+      "kuma.mcp-router.http.name": "MCP Gateway Router",
+      "kuma.mcp-router.http.url": "https://mcp.wileyriley.com",
+      "kuma.mcp-router.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "ha-mcp",
+    "service_name": "ha-mcp",
+    "stack": "mcp",
+    "image": "ghcr.io/homeassistant-ai/ha-mcp:latest",
+    "ports": [],
+    "networks": [
+      "net_smarthome_link",
+      "net_mcp"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "kuma.ha-mcp.http.name": "Home Assistant MCP",
+      "kuma.ha-mcp.http.url": "http://ha-mcp:8086/mcp",
+      "kuma.ha-mcp.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "actual-mcp",
+    "service_name": "actual-mcp",
+    "stack": "mcp",
+    "image": "localhost:8003/actual-mcp:custom",
+    "ports": [
+      "8402:3000"
+    ],
+    "networks": [
+      "net_cloud",
+      "net_mcp"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "kuma.actual-mcp.http.name": "Actual Budget MCP",
+      "kuma.actual-mcp.http.url": "http://10.0.0.10:8402",
+      "kuma.actual-mcp.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "mcp-arr-hd",
+    "service_name": "mcp-arr-hd",
+    "stack": "mcp",
+    "image": "node:20-alpine",
+    "ports": [
+      "8507:3000"
+    ],
+    "networks": [
+      "net_media",
+      "net_mcp"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "kuma.mcp-arr-hd.http.name": "Servarr HD MCP",
+      "kuma.mcp-arr-hd.http.url": "http://10.0.0.10:8507",
+      "kuma.mcp-arr-hd.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "mcp-arr-4k",
+    "service_name": "mcp-arr-4k",
+    "stack": "mcp",
+    "image": "node:20-alpine",
+    "ports": [
+      "8508:3000"
+    ],
+    "networks": [
+      "net_media",
+      "net_mcp"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "kuma.mcp-arr-4k.http.name": "Servarr 4K MCP",
+      "kuma.mcp-arr-4k.http.url": "http://10.0.0.10:8508",
+      "kuma.mcp-arr-4k.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "unifi-mcp",
+    "service_name": "unifi-mcp",
+    "stack": "mcp",
+    "image": "ghcr.io/sirkirby/unifi-network-mcp:latest",
+    "ports": [],
+    "networks": [
+      "net_network",
+      "net_mcp"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "kuma.unifi-mcp.http.name": "UniFi Network MCP",
+      "kuma.unifi-mcp.http.url": "http://unifi-mcp:3000",
+      "kuma.unifi-mcp.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "docker-mcp",
+    "service_name": "docker-mcp",
+    "stack": "mcp",
+    "image": "unknown",
+    "ports": [
+      "8022:8000"
+    ],
+    "networks": [
+      "net_webservices",
+      "net_mcp"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "kuma.docker-mcp.http.name": "Docker MCP",
+      "kuma.docker-mcp.http.url": "http://10.0.0.10:8022",
+      "kuma.docker-mcp.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "plex-mcp",
+    "service_name": "plex-mcp",
+    "stack": "mcp",
+    "image": "unknown",
+    "ports": [],
+    "networks": [
+      "net_webservices",
+      "net_mcp"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "kuma.plex-mcp.http.name": "Plex MCP",
+      "kuma.plex-mcp.http.url": "http://plex-mcp:8000",
+      "kuma.plex-mcp.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "seerr-mcp",
+    "service_name": "seerr-mcp",
+    "stack": "mcp",
+    "image": "unknown",
+    "ports": [],
+    "networks": [
+      "net_webservices",
+      "net_media",
+      "net_mcp"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "kuma.seerr-mcp.http.name": "Overseerr MCP",
+      "kuma.seerr-mcp.http.url": "http://seerr-mcp:8000",
+      "kuma.seerr-mcp.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "notes-rag-mcp",
+    "service_name": "notes-rag-mcp",
+    "stack": "mcp",
+    "image": "ghcr.io/spelech/notes-rag-mcp:latest",
+    "ports": [
+      "8021:3000"
+    ],
+    "networks": [
+      "net_webservices",
+      "net_mcp"
+    ],
+    "caddy_public": "notesrag.wileyriley.com",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "wud.tag.include": "^latest$",
+      "wud.watch": "true",
+      "wud.registry": "ghcr",
+      "wud.trigger.AUTOUPDATE.dryrun": "false",
+      "caddy": "notesrag.wileyriley.com",
+      "caddy.import_1": "cloudflare",
+      "caddy.@auth.path": "/admin*",
+      "caddy.handle": "@auth",
+      "caddy.handle.import": "tinyauth",
+      "caddy.reverse_proxy": "{{upstreams 3000}}",
+      "tinyauth.apps.notesrag.config.domain": "notesrag.wileyriley.com",
+      "tinyauth.apps.notesrag.oauth.groups": "full_admin",
+      "portal.notesrag.name": "Notes RAG",
+      "portal.notesrag.category": "LLMs",
+      "portal.notesrag.icon": "fa-solid fa-folder-tree",
+      "portal.notesrag.color": "#14b8a6",
+      "portal.notesrag.description": "Configure RAG paths & index source code, configs or obsidian notes.",
+      "kuma.notesrag.http.name": "Notes RAG MCP",
+      "kuma.notesrag.http.url": "https://notesrag.wileyriley.com",
+      "kuma.notesrag.http.group": "Infrastructure",
+      "mcp.enabled": "true",
+      "mcp.id": "notes-rag",
+      "mcp.displayName": "Notes RAG",
+      "mcp.port": "3000",
+      "mcp.type": "sse",
+      "mcp.categories": "infrastructure"
+    }
+  },
+  {
+    "container_name": "excel-mcp",
+    "service_name": "excel-mcp",
+    "stack": "mcp",
+    "image": "ghcr.io/astral-sh/uv:python3.12-alpine",
+    "ports": [
+      "8023:8000"
+    ],
+    "networks": [
+      "net_webservices",
+      "net_mcp"
+    ],
+    "caddy_public": "excelmcp.wileyriley.com",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "wud.tag.include": "^latest$",
+      "wud.watch": "true",
+      "wud.registry": "ghcr",
+      "wud.trigger.AUTOUPDATE.dryrun": "false",
+      "caddy": "excelmcp.wileyriley.com",
+      "caddy.import_1": "cloudflare",
+      "caddy.reverse_proxy": "{{upstreams 8000}}",
+      "tinyauth.apps.excel-mcp.config.domain": "excelmcp.wileyriley.com",
+      "tinyauth.apps.excel-mcp.oauth.groups": "full_admin",
+      "portal.excel-mcp.name": "Excel MCP",
+      "portal.excel-mcp.category": "LLMs",
+      "portal.excel-mcp.icon": "fa-solid fa-file-excel",
+      "portal.excel-mcp.color": "#107c41",
+      "portal.excel-mcp.description": "Excel MCP Server for reading and writing Excel files.",
+      "kuma.excel-mcp.http.name": "Excel MCP",
+      "kuma.excel-mcp.http.url": "https://excelmcp.wileyriley.com/sse",
+      "kuma.excel-mcp.http.group": "Infrastructure",
+      "mcp.enabled": "true",
+      "mcp.id": "excel",
+      "mcp.displayName": "Excel MCP",
+      "mcp.port": "8000",
+      "mcp.type": "sse",
+      "mcp.categories": "infrastructure"
+    }
+  },
+  {
+    "container_name": "context7-mcp",
+    "service_name": "context7-mcp",
+    "stack": "mcp",
+    "image": "ghcr.io/supercorp-ai/supergateway:3.4.3",
+    "ports": [
+      "8024:8000"
+    ],
+    "networks": [
+      "net_webservices",
+      "net_mcp"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "kuma.context7-mcp.http.name": "Context7 MCP",
+      "kuma.context7-mcp.http.url": "http://10.0.0.10:8024/healthz",
+      "kuma.context7-mcp.http.group": "Infrastructure",
+      "mcp.enabled": "true",
+      "mcp.id": "context7",
+      "mcp.displayName": "Context7 Documentation",
+      "mcp.port": "8000",
+      "mcp.type": "sse",
+      "mcp.categories": "infrastructure"
+    }
+  },
+  {
+    "container_name": "sequential-thinking-mcp",
+    "service_name": "sequential-thinking-mcp",
+    "stack": "mcp",
+    "image": "ghcr.io/supercorp-ai/supergateway:3.4.3",
+    "ports": [
+      "8025:8000"
+    ],
+    "networks": [
+      "net_webservices",
+      "net_mcp"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "kuma.sequential-thinking-mcp.http.name": "Sequential Thinking MCP",
+      "kuma.sequential-thinking-mcp.http.url": "http://10.0.0.10:8025/healthz",
+      "kuma.sequential-thinking-mcp.http.group": "Infrastructure",
+      "mcp.enabled": "true",
+      "mcp.id": "sequential-thinking",
+      "mcp.displayName": "Sequential Thinking",
+      "mcp.port": "8000",
+      "mcp.type": "sse",
+      "mcp.categories": "infrastructure"
+    }
+  },
+  {
+    "container_name": "codebase-memory-mcp",
+    "service_name": "codebase-memory-mcp",
+    "stack": "mcp",
+    "image": "unknown",
+    "ports": [
+      "8027:8000",
+      "8028:9749"
+    ],
+    "networks": [
+      "net_webservices",
+      "net_mcp"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "kuma.codebase-memory-mcp.http.name": "Codebase Memory MCP",
+      "kuma.codebase-memory-mcp.http.url": "http://10.0.0.10:8027/healthz",
+      "kuma.codebase-memory-mcp.http.group": "Infrastructure",
+      "mcp.enabled": "true",
+      "mcp.id": "codebase-memory",
+      "mcp.displayName": "Codebase Memory",
+      "mcp.port": "8000",
+      "mcp.type": "http",
+      "mcp.categories": "infrastructure",
+      "mcp.path": "/mcp"
+    }
+  },
+  {
+    "container_name": "postgres-mcp-homebox",
+    "service_name": "postgres-mcp-homebox",
+    "stack": "mcp",
+    "image": "crystaldba/postgres-mcp:latest",
+    "ports": [],
+    "networks": [
+      "net_cloud"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "mcp.enabled": "true",
+      "mcp.id": "postgres-homebox",
+      "mcp.displayName": "PostgreSQL (Homebox)",
+      "mcp.port": "8000",
+      "mcp.type": "sse",
+      "mcp.categories": "database,infrastructure"
+    }
+  },
+  {
+    "container_name": "postgres-mcp-mealie",
+    "service_name": "postgres-mcp-mealie",
+    "stack": "mcp",
+    "image": "crystaldba/postgres-mcp:latest",
+    "ports": [],
+    "networks": [
+      "net_cloud"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "mcp.enabled": "true",
+      "mcp.id": "postgres-mealie",
+      "mcp.displayName": "PostgreSQL (Mealie)",
+      "mcp.port": "8000",
+      "mcp.type": "sse",
+      "mcp.categories": "database"
+    }
+  },
+  {
+    "container_name": "postgres-mcp-paperless",
+    "service_name": "postgres-mcp-paperless",
+    "stack": "mcp",
+    "image": "crystaldba/postgres-mcp:latest",
+    "ports": [],
+    "networks": [
+      "net_cloud"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "mcp.enabled": "true",
+      "mcp.id": "postgres-paperless",
+      "mcp.displayName": "PostgreSQL (Paperless)",
+      "mcp.port": "8000",
+      "mcp.type": "sse",
+      "mcp.categories": "database"
+    }
+  },
+  {
+    "container_name": "postgres-mcp-sure",
+    "service_name": "postgres-mcp-sure",
+    "stack": "mcp",
+    "image": "crystaldba/postgres-mcp:latest",
+    "ports": [],
+    "networks": [
+      "net_cloud"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "mcp.enabled": "true",
+      "mcp.id": "postgres-sure",
+      "mcp.displayName": "PostgreSQL (Sure)",
+      "mcp.port": "8000",
+      "mcp.type": "sse",
+      "mcp.categories": "database"
+    }
+  },
+  {
+    "container_name": "postgres-mcp-litellm",
+    "service_name": "postgres-mcp-litellm",
+    "stack": "mcp",
+    "image": "crystaldba/postgres-mcp:latest",
+    "ports": [],
+    "networks": [
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "mcp.enabled": "true",
+      "mcp.id": "postgres-litellm",
+      "mcp.displayName": "PostgreSQL (LiteLLM)",
+      "mcp.port": "8000",
+      "mcp.type": "sse",
+      "mcp.categories": "database"
+    }
+  },
+  {
+    "container_name": "postgres-mcp-riven",
+    "service_name": "postgres-mcp-riven",
+    "stack": "mcp",
+    "image": "crystaldba/postgres-mcp:latest",
+    "ports": [],
+    "networks": [
+      "net_media"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "mcp.enabled": "true",
+      "mcp.id": "postgres-riven",
+      "mcp.displayName": "PostgreSQL (Riven)",
+      "mcp.port": "8000",
+      "mcp.type": "sse",
+      "mcp.categories": "database"
+    }
+  },
+  {
+    "container_name": "postgres-mcp-autopulse",
+    "service_name": "postgres-mcp-autopulse",
+    "stack": "mcp",
+    "image": "crystaldba/postgres-mcp:latest",
+    "ports": [],
+    "networks": [
+      "net_media"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "mcp.enabled": "true",
+      "mcp.id": "postgres-autopulse",
+      "mcp.displayName": "PostgreSQL (Autopulse)",
+      "mcp.port": "8000",
+      "mcp.type": "sse",
+      "mcp.categories": "database"
+    }
+  },
+  {
+    "container_name": "postgres-mcp-comet",
+    "service_name": "postgres-mcp-comet",
+    "stack": "mcp",
+    "image": "crystaldba/postgres-mcp:latest",
+    "ports": [],
+    "networks": [
+      "net_media"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "mcp.enabled": "true",
+      "mcp.id": "postgres-comet",
+      "mcp.displayName": "PostgreSQL (Comet)",
+      "mcp.port": "8000",
+      "mcp.type": "sse",
+      "mcp.categories": "database"
+    }
+  },
+  {
+    "container_name": "mysql-mcp-pricebuddy",
+    "service_name": "mysql-mcp-pricebuddy",
+    "stack": "mcp",
+    "image": "ghcr.io/supercorp-ai/supergateway:3.4.3",
+    "ports": [],
+    "networks": [
+      "net_cloud"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "mcp.enabled": "true",
+      "mcp.id": "mysql-pricebuddy",
+      "mcp.displayName": "MySQL (PriceBuddy)",
+      "mcp.port": "8000",
+      "mcp.type": "sse",
+      "mcp.categories": "database"
+    }
+  },
+  {
+    "container_name": "mysql-mcp-receiptwrangler",
+    "service_name": "mysql-mcp-receiptwrangler",
+    "stack": "mcp",
+    "image": "ghcr.io/supercorp-ai/supergateway:3.4.3",
+    "ports": [],
+    "networks": [
+      "net_cloud"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "mcp.enabled": "true",
+      "mcp.id": "mysql-receiptwrangler",
+      "mcp.displayName": "MySQL (ReceiptWrangler)",
+      "mcp.port": "8000",
+      "mcp.type": "sse",
+      "mcp.categories": "database"
+    }
+  },
+  {
+    "container_name": "mysql-mcp-homeassistant",
+    "service_name": "mysql-mcp-homeassistant",
+    "stack": "mcp",
+    "image": "ghcr.io/supercorp-ai/supergateway:3.4.3",
+    "ports": [],
+    "networks": [
+      "net_smarthome_data",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "mcp.enabled": "true",
+      "mcp.id": "mysql-homeassistant",
+      "mcp.displayName": "MySQL (HomeAssistant)",
+      "mcp.port": "8000",
+      "mcp.type": "sse",
+      "mcp.categories": "database"
+    }
+  },
+  {
+    "container_name": "seerr",
+    "service_name": "seerr",
+    "stack": "media_discovery",
+    "image": "ghcr.io/seerr-team/seerr:latest",
+    "ports": [
+      "8500:5055"
+    ],
+    "networks": [
+      "net_media",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.requests.name": "Overseerr",
+      "portal.requests.description": "Media requests and discovery interface.",
+      "portal.requests.category": "Media Library",
+      "portal.requests.icon": "fa-solid fa-magnifying-glass",
+      "portal.requests.color": "#f43f5e",
+      "tinyauth.apps.requests.config.domain": "requests.wileyriley.com",
+      "tinyauth.apps.requests.oauth.groups": "plex_only,media_access,media_admin,full_admin",
+      "kuma.overseerr.http.name": "Overseerr",
+      "kuma.overseerr.http.url": "https://requests.wileyriley.com"
+    }
+  },
+  {
+    "container_name": "seerr-private",
+    "service_name": "seerr-private",
+    "stack": "media_discovery",
+    "image": "ghcr.io/seerr-team/seerr:latest",
+    "ports": [
+      "8502:5055"
+    ],
+    "networks": [
+      "net_media",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "prowlarr",
+    "service_name": "prowlarr",
+    "stack": "media_discovery",
+    "image": "lscr.io/linuxserver/prowlarr:latest",
+    "ports": [
+      "8501:9696"
+    ],
+    "networks": [
+      "net_media",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.prowlarr.name": "Prowlarr",
+      "portal.prowlarr.description": "Indexer manager and proxy gateway.",
+      "portal.prowlarr.category": "Media Management",
+      "portal.prowlarr.icon": "fa-solid fa-compass",
+      "portal.prowlarr.color": "#8b5cf6",
+      "kuma.prowlarr.http.name": "Prowlarr",
+      "kuma.prowlarr.http.url": "https://prowlarr.wileyriley.com",
+      "kuma.prowlarr.http.group": "- Media",
+      "tinyauth.apps.prowlarr.config.domain": "prowlarr.wileyriley.com",
+      "tinyauth.apps.prowlarr.oauth.groups": "media_admin,full_admin",
+      "tinyauth.apps.prowlarr.path.allow": "^/api"
+    }
+  },
+  {
+    "container_name": "autopulse",
+    "service_name": "autopulse",
+    "stack": "media_discovery",
+    "image": "ghcr.io/dan-online/autopulse:latest",
+    "ports": [
+      "2875:2875"
+    ],
+    "networks": [
+      "net_media"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "autopulse-db",
+    "service_name": "autopulse-db",
+    "stack": "media_discovery",
+    "image": "postgres:17-alpine",
+    "ports": [],
+    "networks": [
+      "net_media"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "autopulse-ui",
+    "service_name": "autopulse-ui",
+    "stack": "media_discovery",
+    "image": "ghcr.io/dan-online/autopulse:ui",
+    "ports": [
+      "8503:2880"
+    ],
+    "networks": [
+      "net_media",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "comet",
+    "service_name": "comet",
+    "stack": "media_discovery",
+    "image": "g0ldyy/comet",
+    "ports": [
+      "8504:8000"
+    ],
+    "networks": [
+      "net_media",
+      "net_webservices"
+    ],
+    "caddy_public": "http://comet.lan, http://comet",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "caddy": "http://comet.lan, http://comet",
+      "caddy.reverse_proxy": "{{upstreams 8000}}",
+      "tinyauth.apps.comet.config.domain": "http://comet.lan",
+      "tinyauth.apps.comet.oauth.groups": "media_admin,full_admin",
+      "portal.comet.name": "Comet",
+      "portal.comet.description": "Comet Stremio Addon (Debrid Link Provider)",
+      "portal.comet.category": "Media Management",
+      "portal.comet.icon": "fa-solid fa-meteor",
+      "portal.comet.color": "#eab308",
+      "kuma.comet.http.name": "Comet",
+      "kuma.comet.http.url": "http://comet.lan/health",
+      "kuma.comet.http.group": "- Media"
+    }
+  },
+  {
+    "container_name": "comet-db",
+    "service_name": "comet-db",
+    "stack": "media_discovery",
+    "image": "postgres:17-alpine",
+    "ports": [],
+    "networks": [
+      "net_media"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "shelflifePlex",
+    "service_name": "shelflifePlex",
+    "stack": "media_discovery",
+    "image": "shelflife:plexLibrary",
+    "ports": [
+      "8905:3000"
+    ],
+    "networks": [
+      "net_media",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.plexvote.name": "Plex Vote",
+      "portal.plexvote.description": "Media request voting system.",
+      "portal.plexvote.category": "Media Library",
+      "portal.plexvote.icon": "fa-solid fa-check-to-slot",
+      "portal.plexvote.color": "#ef4444",
+      "tinyauth.apps.plexvote.config.domain": "plexvote.wileyriley.com",
+      "tinyauth.apps.plexvote.oauth.groups": "plex_only,media_access,media_admin,full_admin",
+      "kuma.plexvote.http.name": "Plex Vote",
+      "kuma.plexvote.http.url": "https://plexvote.wileyriley.com",
+      "kuma.plexvote.http.group": "- Media"
+    }
+  },
+  {
+    "container_name": "sonarrhd",
+    "service_name": "sonarrhd",
+    "stack": "media_content",
+    "image": "lscr.io/linuxserver/sonarr:latest",
+    "ports": [
+      "8700:8989"
+    ],
+    "networks": [
+      "net_media",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.sonarr.name": "Sonarr",
+      "portal.sonarr.description": "TV show downloader and manager (HD).",
+      "portal.sonarr.category": "Media Management",
+      "portal.sonarr.icon": "fa-solid fa-tv",
+      "portal.sonarr.color": "#0ea5e9",
+      "kuma.sonarr.http.name": "Sonarr",
+      "kuma.sonarr.http.url": "https://sonarr.wileyriley.com",
+      "kuma.sonarr.http.group": "- Media",
+      "tinyauth.apps.sonarr.config.domain": "sonarr.wileyriley.com",
+      "tinyauth.apps.sonarr.oauth.groups": "media_admin,full_admin",
+      "tinyauth.apps.sonarr.path.allow": "^/api"
+    }
+  },
+  {
+    "container_name": "sonarr4k",
+    "service_name": "sonarr4k",
+    "stack": "media_content",
+    "image": "lscr.io/linuxserver/sonarr:latest",
+    "ports": [
+      "8701:8989"
+    ],
+    "networks": [
+      "net_media",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.sonarr4k.name": "Sonarr 4K",
+      "portal.sonarr4k.description": "TV show downloader and manager (4K).",
+      "portal.sonarr4k.category": "Media Management",
+      "portal.sonarr4k.icon": "fa-solid fa-tv",
+      "portal.sonarr4k.color": "#3b82f6",
+      "tinyauth.apps.sonarr4k.config.domain": "sonarr4k.wileyriley.com",
+      "tinyauth.apps.sonarr4k.oauth.groups": "media_admin,full_admin",
+      "tinyauth.apps.sonarr4k.path.allow": "^/api"
+    }
+  },
+  {
+    "container_name": "ersatztv",
+    "service_name": "ersatztv",
+    "stack": "media_content",
+    "image": "jasongdove/ersatztv:latest",
+    "ports": [
+      "8903:8409"
+    ],
+    "networks": [
+      "net_media",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.ersatztv.name": "ErsatzTV",
+      "portal.ersatztv.description": "Linear IPTV channel creator.",
+      "portal.ersatztv.category": "Media Management",
+      "portal.ersatztv.icon": "fa-solid fa-tv",
+      "portal.ersatztv.color": "#10b981",
+      "portal.ersatztv.href": "http://tvguide.lan"
+    }
+  },
+  {
+    "container_name": "radarrhd",
+    "service_name": "radarrhd",
+    "stack": "media_content",
+    "image": "lscr.io/linuxserver/radarr:latest",
+    "ports": [
+      "8800:7878"
+    ],
+    "networks": [
+      "net_media",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.radarr.name": "Radarr",
+      "portal.radarr.description": "Movie downloader and manager (HD).",
+      "portal.radarr.category": "Media Management",
+      "portal.radarr.icon": "fa-solid fa-film",
+      "portal.radarr.color": "#10b981",
+      "kuma.radarr.http.name": "Radarr",
+      "kuma.radarr.http.url": "https://radarr.wileyriley.com",
+      "kuma.radarr.http.group": "\ud83c\udf0d Public/Reverse Proxy Entry (HTTPS)",
+      "tinyauth.apps.radarr.config.domain": "radarr.wileyriley.com",
+      "tinyauth.apps.radarr.oauth.groups": "media_admin,full_admin",
+      "tinyauth.apps.radarr.path.allow": "^/api"
+    }
+  },
+  {
+    "container_name": "radarr4k",
+    "service_name": "radarr4k",
+    "stack": "media_content",
+    "image": "lscr.io/linuxserver/radarr:latest",
+    "ports": [
+      "8801:7878"
+    ],
+    "networks": [
+      "net_media",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.radarr4k.name": "Radarr 4K",
+      "portal.radarr4k.description": "Movie downloader and manager (4K).",
+      "portal.radarr4k.category": "Media Management",
+      "portal.radarr4k.icon": "fa-solid fa-film",
+      "portal.radarr4k.color": "#ef4444",
+      "tinyauth.apps.radarr4k.config.domain": "radarr4k.wileyriley.com",
+      "tinyauth.apps.radarr4k.oauth.groups": "media_admin,full_admin",
+      "tinyauth.apps.radarr4k.path.allow": "^/api"
+    }
+  },
+  {
+    "container_name": "tautulli",
+    "service_name": "tautulli",
+    "stack": "media_content",
+    "image": "linuxserver/tautulli",
+    "ports": [
+      "8900:8181"
+    ],
+    "networks": [
+      "net_media",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.plexstats.name": "Tautulli",
+      "portal.plexstats.description": "Plex media server statistics and monitoring.",
+      "portal.plexstats.category": "Media Library",
+      "portal.plexstats.icon": "fa-solid fa-chart-bar",
+      "portal.plexstats.color": "#ff7f0e",
+      "tinyauth.apps.plexstats.config.domain": "plexstats.wileyriley.com",
+      "tinyauth.apps.plexstats.oauth.groups": "plex_only,media_access,media_admin,full_admin",
+      "kuma.tautulli.http.name": "Tautulli",
+      "kuma.tautulli.http.url": "https://plexstats.wileyriley.com",
+      "kuma.tautulli.http.group": "- Media"
+    }
+  },
+  {
+    "container_name": "riven",
+    "service_name": "riven",
+    "stack": "media_content",
+    "image": "ghcr.io/rivenmedia/riven-ts:main",
+    "ports": [
+      "8902:3000"
+    ],
+    "networks": [
+      "net_media",
+      "net_webservices"
+    ],
+    "caddy_public": "riven.wileyriley.com",
+    "caddy_lan": "-",
+    "tinyauth": "Yes",
+    "labels": {
+      "portal.riven.name": "Riven",
+      "portal.riven.description": "Debrid media streaming and catalog manager.",
+      "portal.riven.category": "Media Management",
+      "portal.riven.icon": "fa-solid fa-circle-play",
+      "portal.riven.color": "#a855f7",
+      "caddy": "riven.wileyriley.com",
+      "caddy.import_1": "cloudflare",
+      "caddy.import_2": "tinyauth",
+      "caddy.reverse_proxy": "{{upstreams 3000}}",
+      "tinyauth.apps.riven.config.domain": "riven.wileyriley.com",
+      "tinyauth.apps.riven.oauth.groups": "media_admin,full_admin",
+      "kuma.riven.http.name": "Riven",
+      "kuma.riven.http.url": "https://riven.wileyriley.com",
+      "kuma.riven.http.group": "- Media"
+    }
+  },
+  {
+    "container_name": "riven-bullboard",
+    "service_name": "riven-bullboard",
+    "stack": "media_content",
+    "image": "venatum/bull-board:latest",
+    "ports": [
+      "8907:4000"
+    ],
+    "networks": [
+      "net_media",
+      "net_webservices"
+    ],
+    "caddy_public": "riven-queue.wileyriley.com",
+    "caddy_lan": "-",
+    "tinyauth": "Yes",
+    "labels": {
+      "caddy": "riven-queue.wileyriley.com",
+      "caddy.import_1": "cloudflare",
+      "caddy.import_2": "tinyauth",
+      "caddy.reverse_proxy": "{{upstreams 4000}}",
+      "tinyauth.apps.riven-queue.config.domain": "riven-queue.wileyriley.com",
+      "tinyauth.apps.riven-queue.oauth.groups": "media_admin,full_admin",
+      "portal.riven-queue.name": "Riven Queue",
+      "portal.riven-queue.description": "BullMQ task queue dashboard for Riven media streaming.",
+      "portal.riven-queue.category": "Media Management",
+      "portal.riven-queue.icon": "fa-solid fa-table-list",
+      "portal.riven-queue.color": "#a855f7",
+      "kuma.riven-queue.http.name": "Riven Queue",
+      "kuma.riven-queue.http.url": "https://riven-queue.wileyriley.com",
+      "kuma.riven-queue.http.group": "- Media"
+    }
+  },
+  {
+    "container_name": "riven-redis",
+    "service_name": "riven-redis",
+    "stack": "media_content",
+    "image": "redis:7-alpine",
+    "ports": [],
+    "networks": [
+      "net_media"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "riven-db",
+    "service_name": "riven-db",
+    "stack": "media_content",
+    "image": "postgres:17-alpine",
+    "ports": [],
+    "networks": [
+      "net_media"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "nextcloud_db",
+    "service_name": "nextcloud_db",
+    "stack": "productivity",
+    "image": "lscr.io/linuxserver/mariadb",
+    "ports": [
+      "${DB_PORT}:3306"
+    ],
+    "networks": [
+      "net_cloud"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "nextcloud",
+    "service_name": "nextcloud",
+    "stack": "productivity",
+    "image": "lscr.io/linuxserver/nextcloud:latest",
+    "ports": [
+      "8400:443"
+    ],
+    "networks": [
+      "net_cloud",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.nextcloud.name": "Nextcloud",
+      "portal.nextcloud.description": "Personal cloud storage and collaboration suite.",
+      "portal.nextcloud.category": "Cloud",
+      "portal.nextcloud.icon": "fa-solid fa-cloud",
+      "portal.nextcloud.color": "#0ea5e9",
+      "tinyauth.apps.nextcloud.config.domain": "drive.wileyriley.com",
+      "tinyauth.apps.nextcloud.oauth.groups": "house_member,full_admin",
+      "kuma.nextcloud.http.name": "Nextcloud",
+      "kuma.nextcloud.http.url": "https://drive.wileyriley.com",
+      "kuma.nextcloud.http.group": "\ud83c\udf0d Public/Reverse Proxy Entry (HTTPS)"
+    }
+  },
+  {
+    "container_name": "silverbullet",
+    "service_name": "silverbullet",
+    "stack": "productivity",
+    "image": "ghcr.io/silverbulletmd/silverbullet:latest",
+    "ports": [
+      "8404:3000"
+    ],
+    "networks": [
+      "net_cloud",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.notes.name": "SilverBullet Notes",
+      "portal.notes.description": "Markdown-based note taking vault.",
+      "portal.notes.category": "Cloud",
+      "portal.notes.icon": "fa-solid fa-note-sticky",
+      "portal.notes.color": "#a855f7",
+      "tinyauth.apps.notes.config.domain": "notes.wileyriley.com",
+      "tinyauth.apps.notes.oauth.groups": "house_member,full_admin",
+      "tinyauth.apps.notes.path.allow": "^/(\\.fs.*|\\.ping$|index\\.json$)",
+      "kuma.notes.http.name": "SilverBullet Notes",
+      "kuma.notes.http.url": "https://notes.wileyriley.com",
+      "kuma.notes.http.group": "Smart Home"
+    }
+  },
+  {
+    "container_name": "pricebuddy",
+    "service_name": "pricebuddy",
+    "stack": "productivity",
+    "image": "jez500/pricebuddy:latest",
+    "ports": [
+      "8420:80"
+    ],
+    "networks": [
+      "net_cloud",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "kuma.pricebuddy.http.name": "PriceBuddy",
+      "kuma.pricebuddy.http.url": "https://pricebuddy.wileyriley.com",
+      "kuma.pricebuddy.http.group": "Smart Home"
+    }
+  },
+  {
+    "container_name": "pricebuddy_db",
+    "service_name": "pricebuddy_db",
+    "stack": "productivity",
+    "image": "mysql:8.2",
+    "ports": [],
+    "networks": [
+      "net_cloud"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "pricebuddy_scraper",
+    "service_name": "pricebuddy_scraper",
+    "stack": "productivity",
+    "image": "jez500/seleniumbase-scrapper:latest",
+    "ports": [
+      "8421:3000"
+    ],
+    "networks": [
+      "net_cloud"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "changedetection",
+    "service_name": "changedetection",
+    "stack": "productivity",
+    "image": "ghcr.io/dgtlmoon/changedetection.io:latest",
+    "ports": [
+      "8407:5000"
+    ],
+    "networks": [
+      "net_cloud",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.pricewatcher.name": "Price Watcher",
+      "portal.pricewatcher.description": "Website monitor for changes (ChangeDetection).",
+      "portal.pricewatcher.category": "Cloud",
+      "portal.pricewatcher.icon": "fa-solid fa-eye",
+      "portal.pricewatcher.color": "#f59e0b",
+      "tinyauth.apps.pricewatcher.config.domain": "pricewatcher.wileyriley.com",
+      "tinyauth.apps.pricewatcher.oauth.groups": "house_member,full_admin",
+      "kuma.pricewatcher.http.name": "Price Watcher (ChangeDetection)",
+      "kuma.pricewatcher.http.url": "https://pricewatcher.wileyriley.com",
+      "kuma.pricewatcher.http.group": "Smart Home"
+    }
+  },
+  {
+    "container_name": "browser-sockpuppet-chrome",
+    "service_name": "browser-sockpuppet-chrome",
+    "stack": "productivity",
+    "image": "dgtlmoon/sockpuppetbrowser:latest",
+    "ports": [],
+    "networks": [
+      "net_cloud"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "homebox",
+    "service_name": "homebox",
+    "stack": "productivity",
+    "image": "ghcr.io/sysadminsmedia/homebox:latest",
+    "ports": [
+      "8422:7745"
+    ],
+    "networks": [
+      "net_cloud",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.homebox.name": "Homebox",
+      "portal.homebox.description": "Inventory and asset manager.",
+      "portal.homebox.category": "Cloud",
+      "portal.homebox.icon": "fa-solid fa-box-open",
+      "portal.homebox.color": "#3b82f6",
+      "tinyauth.apps.homebox.config.domain": "homebox.wileyriley.com",
+      "tinyauth.apps.homebox.oauth.groups": "house_member,full_admin",
+      "kuma.homebox.http.name": "Homebox",
+      "kuma.homebox.http.url": "https://homebox.wileyriley.com",
+      "kuma.homebox.http.group": "Smart Home"
+    }
+  },
+  {
+    "container_name": "homebox-db",
+    "service_name": "homebox-db",
+    "stack": "productivity",
+    "image": "postgres:17-alpine",
+    "ports": [],
+    "networks": [
+      "net_cloud"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "paperless_db",
+    "service_name": "paperless_db",
+    "stack": "productivity",
+    "image": "docker.io/library/postgres:16",
+    "ports": [],
+    "networks": [
+      "net_cloud"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "paperless_redis",
+    "service_name": "paperless_redis",
+    "stack": "productivity",
+    "image": "docker.io/library/redis:7",
+    "ports": [],
+    "networks": [
+      "net_cloud"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "paperless",
+    "service_name": "paperless",
+    "stack": "productivity",
+    "image": "ghcr.io/paperless-ngx/paperless-ngx:latest",
+    "ports": [
+      "${PAPERLESS_PORT}:8000"
+    ],
+    "networks": [
+      "net_cloud",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.paperless.name": "Paperless-ngx",
+      "portal.paperless.description": "Document archiver and OCR scanner.",
+      "portal.paperless.category": "Cloud",
+      "portal.paperless.icon": "fa-solid fa-file-pdf",
+      "portal.paperless.color": "#8b5cf6",
+      "tinyauth.apps.paperless.config.domain": "paperless.wileyriley.com",
+      "tinyauth.apps.paperless.oauth.groups": "full_admin",
+      "kuma.paperless.http.name": "Paperless-ngx",
+      "kuma.paperless.http.url": "https://paperless.wileyriley.com",
+      "kuma.paperless.http.group": "Smart Home"
+    }
+  },
+  {
+    "container_name": "code-server",
+    "service_name": "code-server",
+    "stack": "productivity",
+    "image": "codercom/code-server:latest",
+    "ports": [
+      "8444:8080"
+    ],
+    "networks": [
+      "net_webservices",
+      "net_cloud"
+    ],
+    "caddy_public": "ide.wileyriley.com",
+    "caddy_lan": "-",
+    "tinyauth": "Yes",
+    "labels": {
+      "caddy": "ide.wileyriley.com",
+      "caddy.import_1": "cloudflare",
+      "caddy.import_2": "tinyauth",
+      "caddy.reverse_proxy": "{{upstreams 8080}}",
+      "tinyauth.apps.ide.config.domain": "ide.wileyriley.com",
+      "tinyauth.apps.ide.oauth.groups": "full_admin",
+      "portal.ide.name": "VS Code Server",
+      "portal.ide.description": "Browser-based VS Code IDE environment.",
+      "portal.ide.category": "System Infrastructure",
+      "portal.ide.icon": "fa-solid fa-code",
+      "portal.ide.color": "#007acc",
+      "kuma.ide.http.name": "Code Server IDE",
+      "kuma.ide.http.url": "https://ide.wileyriley.com",
+      "kuma.ide.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "homebox-companion",
+    "service_name": "homebox-companion",
+    "stack": "productivity",
+    "image": "ghcr.io/duelion/homebox-companion:latest",
+    "ports": [
+      "${HOMEBOX_COMPANION_PORT}:8000"
+    ],
+    "networks": [
+      "net_cloud",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.homebox-companion.name": "Homebox Companion",
+      "portal.homebox-companion.description": "AI-powered companion for Homebox inventory management.",
+      "portal.homebox-companion.category": "Cloud",
+      "portal.homebox-companion.icon": "fa-solid fa-comment-dots",
+      "portal.homebox-companion.color": "#3b82f6",
+      "tinyauth.apps.homebox-companion.config.domain": "homebox-companion.wileyriley.com",
+      "tinyauth.apps.homebox-companion.oauth.groups": "house_member,full_admin",
+      "kuma.homebox-companion.http.name": "Homebox Companion",
+      "kuma.homebox-companion.http.url": "https://homebox-companion.wileyriley.com",
+      "kuma.homebox-companion.http.group": "Smart Home"
+    }
+  },
+  {
+    "container_name": "mealie",
+    "service_name": "mealie",
+    "stack": "productivity",
+    "image": "ghcr.io/mealie-recipes/mealie:v3.17.0",
+    "ports": [
+      "${MEALIE_PORT}:9000"
+    ],
+    "networks": [
+      "net_cloud",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.mealie.name": "Mealie",
+      "portal.mealie.description": "Mealie recipe and meal planner.",
+      "portal.mealie.category": "Cloud",
+      "portal.mealie.icon": "fa-solid fa-utensils",
+      "portal.mealie.color": "#10b981",
+      "tinyauth.apps.mealie.config.domain": "mealie.wileyriley.com",
+      "tinyauth.apps.mealie.oauth.groups": "house_member,full_admin",
+      "kuma.mealie.http.name": "Mealie",
+      "kuma.mealie.http.url": "https://mealie.wileyriley.com",
+      "kuma.mealie.http.group": "Smart Home"
+    }
+  },
+  {
+    "container_name": "mealie-db",
+    "service_name": "mealie-db",
+    "stack": "productivity",
+    "image": "postgres:17-alpine",
+    "ports": [],
+    "networks": [
+      "net_cloud"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "mqttexplorer",
+    "service_name": "mqttexplorer",
+    "stack": "smarthome_support",
+    "image": "smeagolworms4/mqtt-explorer",
+    "ports": [
+      "8108:4000"
+    ],
+    "networks": [
+      "net_smarthome_talk",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.mqttexplorer.name": "MQTT Explorer",
+      "portal.mqttexplorer.description": "Web-based MQTT client and topic explorer.",
+      "portal.mqttexplorer.category": "Smart Home",
+      "portal.mqttexplorer.icon": "fa-solid fa-circle-nodes",
+      "portal.mqttexplorer.color": "#3b82f6",
+      "portal.mqttexplorer.href": "http://mqttexplorer.lan"
+    }
+  },
+  {
+    "container_name": "glances",
+    "service_name": "glances",
+    "stack": "smarthome_support",
+    "image": "nicolargo/glances:latest-full",
+    "ports": [
+      "host"
+    ],
+    "networks": [],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.glances.name": "Glances",
+      "portal.glances.description": "System performance monitoring.",
+      "portal.glances.category": "System Infrastructure",
+      "portal.glances.icon": "fa-solid fa-chart-line",
+      "portal.glances.color": "#3b82f6",
+      "tinyauth.apps.glances.config.domain": "perf.wileyriley.com",
+      "tinyauth.apps.glances.oauth.groups": "full_admin",
+      "kuma.glances.http.name": "Glances",
+      "kuma.glances.http.url": "https://perf.wileyriley.com",
+      "kuma.glances.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "jupyter",
+    "service_name": "jupyter",
+    "stack": "smarthome_support",
+    "image": "jupyter/datascience-notebook:latest",
+    "ports": [
+      "8204:8888"
+    ],
+    "networks": [
+      "net_smarthome_data",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.jupyter.name": "JupyterLab",
+      "portal.jupyter.description": "Interactive web-based developer environment for notebooks.",
+      "portal.jupyter.category": "System Infrastructure",
+      "portal.jupyter.icon": "fa-solid fa-code",
+      "portal.jupyter.color": "#f59e0b",
+      "portal.jupyter.href": "http://jupyter.lan"
+    }
+  },
+  {
+    "container_name": "cron-automations",
+    "service_name": "cron-automations",
+    "stack": "smarthome_support",
+    "image": "ghcr.io/spelech/cronjobsandscripts:latest",
+    "ports": [
+      "8109:8109"
+    ],
+    "networks": [
+      "net_webservices",
+      "net_smarthome_data"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.cron.name": "Cron Automations",
+      "portal.cron.description": "Scheduled automation script launcher.",
+      "portal.cron.category": "Smart Home",
+      "portal.cron.icon": "fa-solid fa-clock",
+      "portal.cron.color": "#ef4444",
+      "wud.watch": "true",
+      "wud.trigger.AUTOUPDATE.dryrun": "false",
+      "wud.registry": "ghcr",
+      "kuma.cron-automations.http.name": "Cron Automations",
+      "kuma.cron-automations.http.url": "https://cron-automations.wileyriley.com",
+      "kuma.cron-automations.http.group": "\ud83c\udf0d Public/Reverse Proxy Entry (HTTPS)",
+      "tinyauth.apps.cron.config.domain": "cron-automations.wileyriley.com",
+      "tinyauth.apps.cron.oauth.groups": "full_admin"
+    }
+  },
+  {
+    "container_name": "litellm-db",
+    "service_name": "litellm-db",
+    "stack": "ai",
+    "image": "postgres:16-alpine",
+    "ports": [],
+    "networks": [
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "litellm-manager",
+    "service_name": "litellm-manager",
+    "stack": "ai",
+    "image": "ghcr.io/spelech/llmlite-modelmanager:latest",
+    "ports": [
+      "8449:8000"
+    ],
+    "networks": [
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.modelmanager.name": "LLM Model Manager",
+      "portal.modelmanager.description": "Manage and test LiteLLM models and prompts.",
+      "portal.modelmanager.category": "LLMs",
+      "portal.modelmanager.icon": "fa-solid fa-brain",
+      "portal.modelmanager.color": "#a855f7",
+      "wud.tag.include": "^latest$",
+      "wud.watch": "true",
+      "wud.registry": "ghcr",
+      "wud.trigger.AUTOUPDATE.dryrun": "false",
+      "tinyauth.apps.modelmanager.config.domain": "llm-modelmanager.wileyriley.com",
+      "tinyauth.apps.modelmanager.oauth.groups": "full_admin",
+      "kuma.modelmanager.http.name": "LLM Model Manager",
+      "kuma.modelmanager.http.url": "https://llm-modelmanager.wileyriley.com",
+      "kuma.modelmanager.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "litellm",
+    "service_name": "litellm",
+    "stack": "ai",
+    "image": "ghcr.io/berriai/litellm:latest",
+    "ports": [
+      "8448:4000"
+    ],
+    "networks": [
+      "net_webservices",
+      "net_mcp"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.litellm.name": "LiteLLM Gateway",
+      "portal.litellm.description": "Centralized LLM Gateway & Router.",
+      "portal.litellm.category": "LLMs",
+      "portal.litellm.icon": "fa-solid fa-brain",
+      "portal.litellm.color": "#f59e0b",
+      "kuma.litellm.http.name": "LiteLLM Gateway",
+      "kuma.litellm.http.url": "https://llmplatform.wileyriley.com",
+      "kuma.litellm.http.group": "Infrastructure",
+      "tinyauth.apps.litellm.config.domain": "llmplatform.wileyriley.com",
+      "tinyauth.apps.litellm.oauth.groups": "full_admin"
+    }
+  },
+  {
+    "container_name": "qdrant",
+    "service_name": "qdrant",
+    "stack": "ai",
+    "image": "qdrant/qdrant:latest",
+    "ports": [
+      "8010:6333"
+    ],
+    "networks": [
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.qdrant.name": "Qdrant",
+      "portal.qdrant.description": "Vector database for semantic caching.",
+      "portal.qdrant.category": "LLMs",
+      "portal.qdrant.icon": "fa-solid fa-database",
+      "portal.qdrant.color": "#00f2fe",
+      "tinyauth.apps.qdrant.config.domain": "qdrant.wileyriley.com",
+      "tinyauth.apps.qdrant.oauth.groups": "full_admin",
+      "kuma.qdrant.http.name": "Qdrant",
+      "kuma.qdrant.http.url": "https://qdrant.wileyriley.com",
+      "kuma.qdrant.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "actual-chat-web",
+    "service_name": "actual-chat-web",
+    "stack": "ai",
+    "image": "ghcr.io/spelech/actual-budget-chat:latest",
+    "ports": [
+      "8405:8080"
+    ],
+    "networks": [
+      "net_cloud",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.finchat.name": "FinChat",
+      "portal.finchat.description": "Standalone AI Webchat for Actual Budget.",
+      "portal.finchat.category": "Cloud",
+      "portal.finchat.icon": "fa-solid fa-comments",
+      "portal.finchat.color": "#10b981",
+      "wud.watch": "true",
+      "wud.registry": "ghcr",
+      "wud.tag.include": "^\\d+\\.\\d+\\.\\d+$",
+      "wud.trigger.AUTOUPDATE.dryrun": "false",
+      "tinyauth.apps.finchat.config.domain": "finchat.wileyriley.com",
+      "tinyauth.apps.finchat.oauth.groups": "house_member,full_admin",
+      "kuma.finchat.http.name": "Actual AI Chat",
+      "kuma.finchat.http.url": "https://finchat.wileyriley.com",
+      "kuma.finchat.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "actual-ai",
+    "service_name": "actual-ai",
+    "stack": "ai",
+    "image": "sakowicz/actual-ai:latest",
+    "ports": [],
+    "networks": [
+      "net_cloud",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "openwebui",
+    "service_name": "openwebui",
+    "stack": "ai",
+    "image": "ghcr.io/open-webui/open-webui:main",
+    "ports": [
+      "8450:8080"
+    ],
+    "networks": [
+      "net_webservices",
+      "net_mcp"
+    ],
+    "caddy_public": "aichat.wileyriley.com",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "wud.tag.include": "^main$$",
+      "wud.watch": "true",
+      "wud.registry": "ghcr",
+      "wud.trigger.AUTOUPDATE.dryrun": "false",
+      "caddy": "aichat.wileyriley.com",
+      "caddy.import_1": "cloudflare",
+      "caddy.reverse_proxy": "{{upstreams 8080}}",
+      "tinyauth.apps.openwebui.config.domain": "aichat.wileyriley.com",
+      "portal.openwebui.name": "Open WebUI",
+      "portal.openwebui.category": "LLMs",
+      "portal.openwebui.icon": "fa-solid fa-robot",
+      "portal.openwebui.color": "#3b82f6",
+      "portal.openwebui.description": "ChatGPT-like interface for local LLMs.",
+      "tinyauth.apps.openwebui.oauth.groups": "house_member,full_admin",
+      "kuma.openwebui.http.name": "Open WebUI",
+      "kuma.openwebui.http.url": "https://aichat.wileyriley.com",
+      "kuma.openwebui.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "librechat",
+    "service_name": "librechat",
+    "stack": "ai",
+    "image": "registry.librechat.ai/danny-avila/librechat-dev:latest",
+    "ports": [
+      "8451:3080"
+    ],
+    "networks": [
+      "net_webservices",
+      "net_mcp"
+    ],
+    "caddy_public": "librechat.wileyriley.com",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "caddy": "librechat.wileyriley.com",
+      "caddy.import_1": "cloudflare",
+      "caddy.reverse_proxy": "{{upstreams 3080}}",
+      "portal.librechat.name": "LibreChat",
+      "portal.librechat.description": "Open Source ChatGPT Clone with LiteLLM backend",
+      "portal.librechat.category": "LLMs",
+      "portal.librechat.icon": "fa-solid fa-comments",
+      "portal.librechat.color": "#10b981",
+      "kuma.librechat.http.name": "LibreChat",
+      "kuma.librechat.http.url": "https://librechat.wileyriley.com",
+      "kuma.librechat.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "librechat-admin",
+    "service_name": "librechat-admin",
+    "stack": "ai",
+    "image": "registry.librechat.ai/clickhouse/librechat-admin-panel:latest",
+    "ports": [
+      "8452:3000"
+    ],
+    "networks": [
+      "net_webservices"
+    ],
+    "caddy_public": "librechat-admin.wileyriley.com",
+    "caddy_lan": "-",
+    "tinyauth": "Yes",
+    "labels": {
+      "caddy": "librechat-admin.wileyriley.com",
+      "caddy.import_1": "cloudflare",
+      "caddy.import_2": "tinyauth",
+      "caddy.reverse_proxy": "{{upstreams 3000}}",
+      "tinyauth.apps.libreadmin.config.domain": "librechat-admin.wileyriley.com",
+      "tinyauth.apps.libreadmin.oauth.groups": "full_admin",
+      "portal.libreadmin.name": "LibreChat Admin",
+      "portal.libreadmin.description": "LibreChat Administration Panel",
+      "portal.libreadmin.category": "LLMs",
+      "portal.libreadmin.icon": "fa-solid fa-gear",
+      "portal.libreadmin.color": "#6366f1",
+      "kuma.libreadmin.http.name": "LibreChat Admin",
+      "kuma.libreadmin.http.url": "https://librechat-admin.wileyriley.com",
+      "kuma.libreadmin.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "libre-mongodb",
+    "service_name": "libre-mongodb",
+    "stack": "ai",
+    "image": "mongo:8.0.20",
+    "ports": [],
+    "networks": [
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "libre-meilisearch",
+    "service_name": "libre-meilisearch",
+    "stack": "ai",
+    "image": "getmeili/meilisearch:v1.35.1",
+    "ports": [],
+    "networks": [
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "libre-vectordb",
+    "service_name": "libre-vectordb",
+    "stack": "ai",
+    "image": "pgvector/pgvector:0.8.0-pg15-trixie",
+    "ports": [],
+    "networks": [
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "libre-rag-api",
+    "service_name": "libre-rag-api",
+    "stack": "ai",
+    "image": "registry.librechat.ai/danny-avila/librechat-rag-api-dev-lite:latest",
+    "ports": [],
+    "networks": [
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "cadam",
+    "service_name": "cadam",
+    "stack": "ai",
+    "image": "ghcr.io/spelech/cadamcontainer:latest",
+    "ports": [
+      "8408:3000"
+    ],
+    "networks": [
+      "net_cloud",
+      "net_webservices"
+    ],
+    "caddy_public": "cadam.wileyriley.com",
+    "caddy_lan": "-",
+    "tinyauth": "Yes",
+    "labels": {
+      "caddy": "cadam.wileyriley.com",
+      "caddy.import_1": "cloudflare",
+      "caddy.import_2": "tinyauth",
+      "caddy.reverse_proxy": "{{upstreams 3000}}",
+      "tinyauth.apps.cadam.config.domain": "cadam.wileyriley.com",
+      "tinyauth.apps.cadam.oauth.groups": "house_member,full_admin",
+      "kuma.cadam.http.name": "CADAM Text-to-CAD",
+      "kuma.cadam.http.url": "https://cadam.wileyriley.com",
+      "kuma.cadam.http.group": "Smart Home",
+      "portal.cadam.name": "CADAM",
+      "portal.cadam.description": "Parametric 3D Model Generator (Text-to-CAD)",
+      "portal.cadam.category": "LLMs",
+      "portal.cadam.icon": "fa-solid fa-cube",
+      "portal.cadam.color": "#ec4899"
+    }
+  },
+  {
+    "container_name": "registry",
+    "service_name": "registry",
+    "stack": "container_registry",
+    "image": "registry:2",
+    "ports": [
+      "8003:5000"
+    ],
+    "networks": [
+      "net_network",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "ledgerai",
+    "service_name": "ledgerai",
+    "stack": "finance",
+    "image": "ghcr.io/spelech/ledgerai:main",
+    "ports": [
+      "8440:3000"
+    ],
+    "networks": [
+      "net_cloud",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.fintrace.name": "LedgerAI",
+      "portal.fintrace.description": "AI-powered ledger statement processor.",
+      "portal.fintrace.category": "Cloud",
+      "portal.fintrace.icon": "fa-solid fa-chart-line",
+      "portal.fintrace.color": "#ef4444",
+      "wud.watch": "true",
+      "wud.tag.include": "^main$",
+      "wud.registry": "ghcr",
+      "wud.trigger.AUTOUPDATE.dryrun": "false",
+      "tinyauth.apps.fintrace.config.domain": "fintrace.wileyriley.com",
+      "tinyauth.apps.fintrace.oauth.groups": "full_admin",
+      "kuma.fintrace.http.name": "LedgerAI",
+      "kuma.fintrace.http.url": "https://fintrace.wileyriley.com",
+      "kuma.fintrace.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "ledgerai_db",
+    "service_name": "ledgerai_db",
+    "stack": "finance",
+    "image": "pgvector/pgvector:pg17",
+    "ports": [],
+    "networks": [
+      "net_cloud"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "actual",
+    "service_name": "actual",
+    "stack": "finance",
+    "image": "ghcr.io/actualbudget/actual-server:latest",
+    "ports": [
+      "8401:5006"
+    ],
+    "networks": [
+      "net_cloud",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.actual.name": "Actual Budget",
+      "portal.actual.description": "Local-first personal finance app.",
+      "portal.actual.category": "Cloud",
+      "portal.actual.icon": "fa-solid fa-file-invoice-dollar",
+      "portal.actual.color": "#10b981",
+      "tinyauth.apps.actual.config.domain": "fin.wileyriley.com",
+      "tinyauth.apps.actual.oauth.groups": "house_member,full_admin",
+      "kuma.actual.http.name": "Actual Budget",
+      "kuma.actual.http.url": "https://fin.wileyriley.com",
+      "kuma.actual.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "actual-auto-sync",
+    "service_name": "actual-auto-sync",
+    "stack": "finance",
+    "image": "seriouslag/actual-auto-sync:latest",
+    "ports": [],
+    "networks": [
+      "net_cloud"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "receiptwrangler_db",
+    "service_name": "receiptwrangler-db",
+    "stack": "finance",
+    "image": "mariadb:10",
+    "ports": [],
+    "networks": [
+      "net_cloud"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "receiptwrangler_redis",
+    "service_name": "receiptwrangler-redis",
+    "stack": "finance",
+    "image": "redis:alpine",
+    "ports": [],
+    "networks": [
+      "net_cloud"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "receiptwrangler",
+    "service_name": "receiptwrangler",
+    "stack": "finance",
+    "image": "noah231515/receipt-wrangler:latest",
+    "ports": [
+      "${RECEIPTWRANGLER_PORT}:80"
+    ],
+    "networks": [
+      "net_cloud",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.receiptwrangler.name": "Receipt Wrangler",
+      "portal.receiptwrangler.description": "Receipt management and search.",
+      "portal.receiptwrangler.category": "Cloud",
+      "portal.receiptwrangler.icon": "fa-solid fa-receipt",
+      "portal.receiptwrangler.color": "#3b82f6",
+      "tinyauth.apps.receiptwrangler.config.domain": "receipts.wileyriley.com",
+      "tinyauth.apps.receiptwrangler.oauth.groups": "house_member,full_admin",
+      "kuma.receipts.http.name": "Receipt Wrangler",
+      "kuma.receipts.http.url": "https://receipts.wileyriley.com",
+      "kuma.receipts.http.group": "Smart Home"
+    }
+  },
+  {
+    "container_name": "sure_db",
+    "service_name": "sure_db",
+    "stack": "finance",
+    "image": "postgres:16",
+    "ports": [],
+    "networks": [
+      "net_cloud"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "sure_redis",
+    "service_name": "sure_redis",
+    "stack": "finance",
+    "image": "redis:latest",
+    "ports": [],
+    "networks": [
+      "net_cloud"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "sure_web",
+    "service_name": "sure_web",
+    "stack": "finance",
+    "image": "ghcr.io/we-promise/sure:stable",
+    "ports": [
+      "8406:3000"
+    ],
+    "networks": [
+      "net_cloud",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.sure.name": "Sure",
+      "portal.sure.description": "AI-powered personal finance tracker.",
+      "portal.sure.category": "Cloud",
+      "portal.sure.icon": "fa-solid fa-coins",
+      "portal.sure.color": "#6366f1",
+      "kuma.sure.http.name": "Sure Finance",
+      "kuma.sure.http.url": "https://sure.wileyriley.com",
+      "kuma.sure.http.group": "Infrastructure"
+    }
+  },
+  {
+    "container_name": "sure_worker",
+    "service_name": "sure_worker",
+    "stack": "finance",
+    "image": "ghcr.io/we-promise/sure:stable",
+    "ports": [],
+    "networks": [
+      "net_cloud",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "homeassistant",
+    "service_name": "homeassistant",
+    "stack": "smarthome_core",
+    "image": "homeassistant/home-assistant",
+    "ports": [
+      "host"
+    ],
+    "networks": [],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.homeassistant.name": "Home Assistant",
+      "portal.homeassistant.description": "Core smart home automation hub.",
+      "portal.homeassistant.category": "Smart Home",
+      "portal.homeassistant.icon": "fa-solid fa-house-laptop",
+      "portal.homeassistant.color": "#0ea5e9",
+      "portal.homeassistant.href": "https://ha.wileyriley.com",
+      "portal.homeassistant.groups": "house_member,full_admin",
+      "kuma.homeassistant.http.name": "Home Assistant",
+      "kuma.homeassistant.http.url": "https://ha.wileyriley.com",
+      "kuma.homeassistant.http.group": "Smart Home"
+    }
+  },
+  {
+    "container_name": "mariadb",
+    "service_name": "mariadb",
+    "stack": "smarthome_core",
+    "image": "linuxserver/mariadb",
+    "ports": [
+      "8200:3306",
+      "8201:3307"
+    ],
+    "networks": [
+      "net_smarthome_data"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "matter-hub",
+    "service_name": "matter-hub",
+    "stack": "smarthome_core",
+    "image": "ghcr.io/t0bst4r/home-assistant-matter-hub:latest",
+    "ports": [
+      "host"
+    ],
+    "networks": [],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "mqtt",
+    "service_name": "mosquitto",
+    "stack": "smarthome_core",
+    "image": "eclipse-mosquitto",
+    "ports": [
+      "8100:1883",
+      "8101:9001"
+    ],
+    "networks": [
+      "net_smarthome_talk",
+      "net_smarthome_link",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "kuma.mqtt-broker.port.name": "MQTT Broker",
+      "kuma.mqtt-broker.port.hostname": "10.0.0.10",
+      "kuma.mqtt-broker.port.port": "8100",
+      "kuma.mqtt-broker.port.group": "\ud83c\udfe0 Internal Services (TCP Port)"
+    }
+  },
+  {
+    "container_name": "mqttdev",
+    "service_name": "mqttdev",
+    "stack": "smarthome_core",
+    "image": "eclipse-mosquitto",
+    "ports": [
+      "8102:1883",
+      "8103:9001"
+    ],
+    "networks": [
+      "net_smarthome_talk"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "zigbee2mqtt",
+    "service_name": "zigbee2mqtt",
+    "stack": "smarthome_core",
+    "image": "koenkk/zigbee2mqtt",
+    "ports": [
+      "8104:8092"
+    ],
+    "networks": [
+      "net_smarthome_link",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.zigbee.name": "Zigbee2MQTT",
+      "portal.zigbee.description": "Zigbee to MQTT bridge interface.",
+      "portal.zigbee.category": "Smart Home",
+      "portal.zigbee.icon": "fa-solid fa-circle-nodes",
+      "portal.zigbee.color": "#eab308",
+      "tinyauth.apps.zigbee.config.domain": "zigbee.wileyriley.com",
+      "tinyauth.apps.zigbee.oauth.groups": "full_admin",
+      "kuma.zigbee.http.name": "Zigbee2MQTT",
+      "kuma.zigbee.http.url": "https://zigbee.wileyriley.com",
+      "kuma.zigbee.http.group": "Smart Home"
+    }
+  },
+  {
+    "container_name": "zwavejs2mqtt",
+    "service_name": "zwavejs2mqtt",
+    "stack": "smarthome_core",
+    "image": "zwavejs/zwave-js-ui:latest",
+    "ports": [
+      "8105:8091",
+      "8106:3000"
+    ],
+    "networks": [
+      "net_smarthome_link",
+      "net_webservices"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.zwavejs.name": "Z-Wave JS UI",
+      "portal.zwavejs.description": "Z-Wave network gateway.",
+      "portal.zwavejs.category": "Smart Home",
+      "portal.zwavejs.icon": "fa-solid fa-wave-square",
+      "portal.zwavejs.color": "#3b82f6",
+      "tinyauth.apps.zwavejs.config.domain": "zwave.wileyriley.com",
+      "tinyauth.apps.zwavejs.oauth.groups": "full_admin",
+      "kuma.zwavejs.http.name": "Z-Wave JS UI (zwave)",
+      "kuma.zwavejs.http.url": "https://zwave.wileyriley.com",
+      "kuma.zwavejs.http.group": "Smart Home"
+    }
+  },
+  {
+    "container_name": "ringmqtt",
+    "service_name": "ringmqtt",
+    "stack": "smarthome_core",
+    "image": "tsightler/ring-mqtt",
+    "ports": [
+      "8107:8554"
+    ],
+    "networks": [
+      "net_smarthome_link"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "esphome",
+    "service_name": "esphome",
+    "stack": "smarthome_core",
+    "image": "esphome/esphome",
+    "ports": [
+      "6052:6052",
+      "host"
+    ],
+    "networks": [],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {
+      "portal.esphome.name": "ESPHome",
+      "portal.esphome.description": "ESP8266/ESP32 microcontrollers firmware management.",
+      "portal.esphome.category": "Smart Home",
+      "portal.esphome.icon": "fa-solid fa-microchip",
+      "portal.esphome.color": "#10b981",
+      "tinyauth.apps.esphome.config.domain": "esp.wileyriley.com",
+      "tinyauth.apps.esphome.oauth.groups": "full_admin",
+      "tinyauth.apps.esphome.path.allow": "^/api",
+      "kuma.esphome.http.name": "ESPHome",
+      "kuma.esphome.http.url": "https://esp.wileyriley.com",
+      "kuma.esphome.http.group": "Smart Home"
+    }
+  },
+  {
+    "container_name": "govee2mqtt",
+    "service_name": "govee2mqtt",
+    "stack": "smarthome_core",
+    "image": "ghcr.io/wez/govee2mqtt:latest",
+    "ports": [
+      "host"
+    ],
+    "networks": [],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  },
+  {
+    "container_name": "wyzesense",
+    "service_name": "wyzesense",
+    "stack": "smarthome_core",
+    "image": "raetha/wyzesense2mqtt:latest",
+    "ports": [],
+    "networks": [
+      "net_smarthome_link"
+    ],
+    "caddy_public": "-",
+    "caddy_lan": "-",
+    "tinyauth": "No",
+    "labels": {}
+  }
+]
